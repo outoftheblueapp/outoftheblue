@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Out of the Blue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{ --deep:#0f172a; --sea:#4fc3dc; --sea-600:#36b2cd; --sand:#fff7e6; }
+    html{ font-size:18px }
+    body{ font-family:'Outfit',system-ui,-apple-system,Segoe UI,Roboto,Arial; color:var(--deep); background:var(--sand); margin:0 }
+    .card{ border-radius:1.25rem; background:#fff; border:1px solid #e2e8f0; padding:1rem; box-shadow:0 10px 30px rgba(15,23,42,.06) }
+    .btn{ border-radius:14px; background:#fff; border:1px solid #e2e8f0; padding:.65rem 1rem; box-shadow:0 2px 10px rgba(15,23,42,.06) }
+    .btn:hover{ background:#f8fafc }
+    header.sticky{ position:sticky; top:0; backdrop-filter:saturate(140%) blur(6px); background:rgba(255,255,255,.85); border-bottom:1px solid #e2e8f0; z-index:30 }
+    .brand img{ height:48px; width:auto }
+    .hero{ position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center }
+    .hero img.bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.7 }
+    .hero .overlay{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:1.25rem }
+    .notice { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.35); z-index:50; }
+    .notice .box { background:#fff; padding:1rem 1.25rem; border-radius:1rem; box-shadow:0 10px 30px rgba(15,23,42,.15) }
+  </style>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const isRoot = () => location.pathname === '/';
+    const rulesKey = 'oob_rules_accepted';
+    const stripBrackets = (s) => (s||'').replace(/\[[\s\S]*?\]/g, '').replace(/[\[\]]/g,'').trim();
+    const getAccepted = () => { try { return localStorage.getItem(rulesKey) === 'yes'; } catch(e){ return false; } };
+    const setAccepted = (v) => { try { localStorage.setItem(rulesKey, v ? 'yes' : 'no'); } catch(e){} };
+
+    function App(){
+      const [lang] = React.useState(getLang());
+      const [data, setData] = React.useState(null);
+      const isLanding = isRoot();
+      React.useEffect(()=>{ fetch('/content.json').then(r=>r.json()).then(setData).catch(()=>setData({error:true})); },[]);
+      if(!data) return <div style={{padding:'2rem'}}>Loading…</div>;
+      if(data.error) return <div style={{padding:'2rem'}}>Content failed to load.</div>;
+      const L = data[lang] || data.he;
+      const dir = lang==='he' ? 'rtl' : 'ltr';
+      return (
+        <div dir={dir}>
+          {!isLanding && <Header lang={lang} /> }
+          {isLanding ? <Landing /> : <Welcome L={L} lang={lang} /> }
+          <footer className="mt-12 py-10 text-center text-xs opacity-60">© {new Date().getFullYear()} Out of the Blue</footer>
+        </div>
+      );
+    }
+
+    function Header({ lang }){
+      return (
+        <header className="sticky">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+            <div className="brand"><img src="/brand-logo-v42.png" alt="Out of the Blue"/></div>
+            <div className="inline-flex overflow-hidden rounded-2xl border">
+              <a href="/welcome?lang=he" className={"px-3 py-2 text-sm "+(lang==='he'?'bg-[var(--sea)] text-white':'bg-white')}>HE</a>
+              <a href="/welcome?lang=en" className={"px-3 py-2 text-sm "+(lang==='en'?'bg-[var(--sea)] text-white':'bg-white')}>EN</a>
+            </div>
+          </div>
+        </header>
+      );
+    }
+
+    function Landing(){
+      const accepted = (localStorage.getItem('oob_rules_accepted') === 'yes');
+      return (
+        <section className="hero">
+          <img src="/cover.jpg" alt="" className="bg" />
+          <div className="overlay">
+            <img src="/brand-logo-v42.png" alt="Out of the Blue" style={{width:'min(85vw, 340px)'}} />
+            <div className="flex gap-3 mt-2">
+              <a className="rounded-2xl bg-[var(--sea)] text-white px-5 py-3 shadow hover:bg-[var(--sea-600)]"
+                 href={accepted ? "/welcome?lang=en" : "/section/rules?lang=en"}>
+                English
+              </a>
+              <a className="rounded-2xl bg-[var(--sea)] text-white px-5 py-3 shadow hover:bg-[var(--sea-600)]"
+                 href={accepted ? "/welcome?lang=he" : "/section/rules?lang=he"}>
+                עברית
+              </a>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Welcome({ L, lang }){
+      // Safety: if not accepted, redirect to rules first
+      React.useEffect(()=>{
+        if (localStorage.getItem('oob_rules_accepted') !== 'yes') {
+          location.href = '/section/rules?lang=' + lang;
+        }
+      }, [lang]);
+
+      const to = (key) => key==='ask' ? '/ask?lang='+lang : '/section/'+key+'?lang='+lang;
+      const [showNotice, setShowNotice] = React.useState(false);
+      const noticeText = lang==='he' ? 'נא להסכים לחוקי הבית' : 'Please accept house rules';
+
+      return (
+        <main className="mx-auto max-w-6xl px-5 py-10">
+          <h1 className="text-3xl font-semibold mb-3">{L.welcomeTitle}</h1>
+          <p className="opacity-80 mb-6 leading-relaxed">{stripBrackets(L.welcomeIntro)}</p>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <a href={to('ask')} className="card block hover:shadow-lg transition">
+              <div className="text-lg font-semibold mb-1">{lang==='he'?'שאלו אותי כל דבר':'Ask me anything'}</div>
+            </a>
+
+            <a href={to('rules')} className="card block hover:shadow-lg transition">
+              <div className="text-lg font-semibold mb-1">
+                {lang==='he'?'חוקי הבית':'House rules'} <span className="text-sm opacity-70">({lang==='he'?'חובה לקרוא':'must read'})</span>
+              </div>
+            </a>
+
+            {/* Arrival link remains normal (no extra gating now) */}
+            <a href={to('arrival')} className="card block hover:shadow-lg transition">
+              <div className="text-lg font-semibold mb-1">{lang==='he'?'הוראות הגעה וכניסה':'Arrival essentials'}</div>
+            </a>
+
+            <a href={to('info')} className="card block hover:shadow-lg transition">
+              <div className="text-lg font-semibold mb-1">{lang==='he'?'מידע חשוב':'Important information'}</div>
+            </a>
+
+            <a href={to('appliances')} className="card block hover:shadow-lg transition">
+              <div className="text-lg font-semibold mb-1">{lang==='he'?'הוראות שימוש במכשירים':'Appliance instructions'}</div>
+            </a>
+
+            <a href={to('useful')} className="card block hover:shadow-lg transition">
+              <div className="text-lg font-semibold mb-1">{lang==='he'?'מידע שימושי':'Useful information'}</div>
+            </a>
+          </div>
+
+          {showNotice &&
+            <div className="notice" onClick={()=>setShowNotice(false)}>
+              <div className="box" onClick={(e)=>e.stopPropagation()}>
+                {noticeText}
+                <div className="mt-3 text-right">
+                  <button className="btn" onClick={()=>setShowNotice(false)}>{lang==='he'?'סגור':'Close'}</button>
+                </div>
+              </div>
+            </div>
+          }
+        </main>
+      );
+    }
+
+    function BackToMenu({lang}){
+      return <a className="btn inline-block my-2" href={'/welcome?lang='+lang}>{lang==='he'?'חזרה לתפריט':'Back to main menu'}</a>;
+    }
+
+    // Ask page
+    function AskPage({lang}){
+      const [data,setData]=React.useState(null);
+      const [q,setQ]=React.useState('');
+      const [hits,setHits]=React.useState([]);
+      React.useEffect(()=>{ fetch('/content.json').then(r=>r.json()).then(setData); },[]);
+      const dir = lang==='he'?'rtl':'ltr';
+      const onAsk=(e)=>{
+        e.preventDefault();
+        if(!data) return;
+        const L = data[lang]||data.he;
+        const texts=[];
+        const pushAll = (arr, tag)=> (arr||[]).forEach(t=>texts.push({t, tag}));
+        pushAll(L.sections.rules?.content,'rules');
+        pushAll(L.sections.info?.content,'info');
+        pushAll(L.sections.useful?.content,'useful');
+        pushAll(L.sections.arrival?.suite313,'arrival-313');
+        pushAll(L.sections.arrival?.suite413,'arrival-413');
+        pushAll(L.sections.appliances?.suite313,'appliances-313');
+        pushAll(L.sections.appliances?.suite413,'appliances-413');
+        const qn = q.trim().toLowerCase();
+        const scored = texts.map(o=>{
+          const t=o.t.toLowerCase();
+          let score=0;
+          qn.split(/\s+/).forEach(w=>{ if(w && t.includes(w)) score+=1; });
+          return {...o, score};
+        }).filter(o=>o.score>0).sort((a,b)=>b.score-a.score).slice(0,12);
+        setHits(scored);
+      };
+      return <div dir={dir} className="mx-auto max-w-3xl px-5 py-10">
+        <BackToMenu lang={lang}/>
+        <h1 className="text-3xl font-semibold mb-4">{lang==='he'?'שאלו אותי כל דבר':'Ask me anything'}</h1>
+        <form onSubmit={onAsk} className="flex gap-2 mb-4">
+          <input className="flex-1 border rounded-xl px-3 py-2" placeholder={lang==='he'?'כתבו שאלה...':'Type a question...'} value={q} onChange={e=>setQ(e.target.value)} />
+          <button className="btn" type="submit">{lang==='he'?'חיפוש':'Search'}</button>
+        </form>
+        <div>
+          {hits.length===0 ? <p className="opacity-70">{lang==='he'?'תוצאות יוצגו כאן.':'Results will appear here.'}</p> :
+            <div className="space-y-2">
+              {hits.map((h,i)=>(<div key={i} className="card">{h.t}<div className="text-xs opacity-60 mt-1">{h.tag}</div></div>))}
+            </div>
+          }
+        </div>
+      </div>;
+    }
+
+    // Info/Useful helpers
+    function renderInfoLine(line){
+      const idx = line.indexOf(':');
+      if(idx>0){
+        const a = line.slice(0, idx).trim();
+        const b = line.slice(idx+1).trim();
+        return <p className="mb-3 leading-relaxed"><strong>{a}:</strong> {b}</p>;
+      }
+      return <p className="mb-3 leading-relaxed">{line}</p>;
+    }
+    function extractUrl(s){
+      const m = s.match(/https?:\/\/[^\s)\]]+/i);
+      return m ? m[0].replace(/[),.]+$/,'') : null;
+    }
+    function renderUsefulLine(line){
+      const url = extractUrl(line);
+      if(url){
+        const label = line.replace(/https?:\/\/[^\s)\]]+/i,'').replace(/[()]/g,'').trim() || 'Open';
+        return <p className="mb-3 leading-relaxed"><a href={url} target="_blank" rel="noopener">{label}</a></p>;
+      }
+      return <p className="mb-3 leading-relaxed">{line}</p>;
+    }
+
+    // Rules page content component
+    function RulesContent({sec, lang}){
+      const [checked,setChecked] = React.useState(false);
+      return <div>
+        {(sec?.content||[]).map((p,i)=>(<p key={i} className="mb-3 leading-relaxed">{p}</p>))}
+        <div className="mt-4 flex items-center gap-2">
+          <input id="acceptRules" type="checkbox" checked={checked} onChange={e=>setChecked(e.target.checked)} />
+          <label htmlFor="acceptRules">{lang==='he'?'מסכים/ה לחוקי הבית':'I accept the house rules'}</label>
+        </div>
+        <button className="btn mt-3" disabled={!checked} onClick={()=>{ try{localStorage.setItem('oob_rules_accepted','yes');}catch(e){}; location.href='/welcome?lang='+lang; }}>
+          {lang==='he'?'אישור':'Accept'}
+        </button>
+      </div>;
+    }
+
+    // Router
+    const path = location.pathname;
+    if(path==='/ask'){
+      const lang = getLang();
+      ReactDOM.createRoot(document.getElementById('root')).render(<AskPage lang={lang}/>);
+    } else if(path.startsWith('/section/')){
+      const parts = path.split('/').filter(Boolean);
+      const key = parts[1];
+      const suite = parts[2];
+      const lang = getLang();
+
+      fetch('/content.json').then(r=>r.json()).then(data=>{
+        const L = data[lang] || data.he;
+        const dir = lang==='he' ? 'rtl' : 'ltr';
+        const root = document.getElementById('root');
+
+        if((key==='arrival'||key==='appliances') && (suite==='313' || suite==='413')){
+          const sec = L.sections[key];
+          const content = suite==='313' ? (sec.suite313||[]) : (sec.suite413||[]);
+          ReactDOM.createRoot(root).render(
+            <div dir={dir}>
+              <Header lang={lang} />
+              <main className="mx-auto max-w-3xl px-5 py-10">
+                <BackToMenu lang={lang}/>
+                <h1 className="text-3xl font-semibold mb-6">{(key==='arrival' ? (lang==='he'?'הוראות הגעה וכניסה':'Arrival essentials') : (lang==='he'?'הוראות שימוש במכשירים':'Appliance instructions'))+' · '+(lang==='he'?(suite==='313'?'סוויטה 313':'סוויטה 413'):('Suite '+suite))}</h1>
+                {content.map((p,i)=>(<p key={i} className="mb-3 leading-relaxed">{p}</p>))}
+              </main>
+            </div>
+          );
+        } else if(key==='arrival' || key==='appliances'){
+          ReactDOM.createRoot(root).render(
+            <div dir={dir}>
+              <Header lang={lang} />
+              <main className="mx-auto max-w-3xl px-5 py-10">
+                <BackToMenu lang={lang}/>
+                <h1 className="text-3xl font-semibold mb-6">{key==='arrival' ? (lang==='he'?'הוראות הגעה וכניסה':'Arrival essentials') : (lang==='he'?'הוראות שימוש במכשירים':'Appliance instructions')}</h1>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <a className="card block" href={'/section/'+key+'/313?lang='+lang}>
+                    <h2 className="text-xl font-semibold mb-2">{lang==='he'?'סוויטה 313':'Suite 313'}</h2>
+                    <p className="opacity-80">{lang==='he'?'הוראות לסוויטה 313':'Instructions for Suite 313'}</p>
+                  </a>
+                  <a className="card block" href={'/section/'+key+'/413?lang='+lang}>
+                    <h2 className="text-xl font-semibold mb-2">{lang==='he'?'סוויטה 413':'Suite 413'}</h2>
+                    <p className="opacity-80">{lang==='he'?'הוראות לסוויטה 413':'Instructions for Suite 413'}</p>
+                  </a>
+                </div>
+              </main>
+            </div>
+          );
+        } else if(key==='info' || key==='useful' || key==='rules'){
+          const sec = L.sections[key];
+          ReactDOM.createRoot(root).render(
+            <div dir={dir}>
+              <Header lang={lang} />
+              <main className="mx-auto max-w-3xl px-5 py-10">
+                <BackToMenu lang={lang}/>
+                <h1 className="text-3xl font-semibold mb-6">{sec?.title || key}</h1>
+                {key==='rules' ? <RulesContent sec={sec} lang={lang}/> :
+                 key==='info' ? (sec?.content||[]).map((p,i)=> <React.Fragment key={i}>{renderInfoLine(p)}</React.Fragment>) :
+                 (sec?.content||[]).map((p,i)=> <React.Fragment key={i}>{renderUsefulLine(p)}</React.Fragment>)}
+              </main>
+            </div>
+          );
+        }
+      }).catch(()=>{ document.getElementById('root').innerHTML = '<div style="padding:2rem">Failed to load content.</div>'; });
+    } else {
+      ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+    }
+
+    function getLang(){
+      const q=new URLSearchParams(location.search);
+      const v=q.get('lang');
+      return (v==='en'?'en':'he');
+    }
+  </script>
+  <link rel="icon" href="/brand-logo-v42.png" />
+</body>
+</html>
