@@ -9,7 +9,7 @@
     <h1>Back Office</h1>
     <div>Loading editor… If this stays here, press F12 → Console for errors.</div>
 
-    <!-- Netlify Identity widget (invite + login) -->
+    <!-- Netlify Identity (invite + login) -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
       if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
@@ -21,45 +21,47 @@
       }
     </script>
 
-    <!-- Decap CMS -->
- <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <!-- Tell Decap not to auto-load /admin/config.yml -->
+    <script>window.CMS_MANUAL_INIT = true;</script>
 
+    <!-- Decap CMS (legacy bundle exposes window.CMS) -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
-    <!-- INLINE INIT -->
+    <!-- Manual init with inline config that edits your content.json -->
     <script>
-      // Marker so we can verify this exact file deployed:
-      console.log("INLINE CONFIG LOADED");
-      var marker = document.createElement('div');
-      marker.textContent = "• Inline boot script present";
-      marker.style.opacity = ".6";
-      document.body.appendChild(marker);
-
+      console.log("INLINE CONFIG LOADED (manual init)");
       if (window.CMS) {
         const cfg = {
           load_config_file: false,
           backend: { name: 'git-gateway', branch: 'main' },
           media_folder: 'static/uploads',
           public_folder: '/uploads',
-          collections: [{
-            name: 'site_content_raw',
-            label: 'Site Content (Advanced)',
-            files: [{
-              file: 'outoftheblue_site_v4_12_rules_fix/content.json',
-              label: 'content.json',
-              name: 'raw',
-              format: 'json',
-              fields: [{
-                label: 'Raw JSON',
-                name: 'body',
-                widget: 'code',
-                default_language: 'json',
-                allow_language_selection: false
-              }]
-            }]
-          }]
+          collections: [
+            {
+              name: 'site_content_raw',
+              label: 'Site Content (Advanced)',
+              files: [
+                {
+                  file: 'outoftheblue_site_v4_12_rules_fix/content.json',
+                  label: 'content.json',
+                  name: 'raw',
+                  format: 'json',
+                  fields: [
+                    {
+                      label: 'Raw JSON',
+                      name: 'body',
+                      widget: 'code',
+                      default_language: 'json',
+                      allow_language_selection: false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         };
         CMS.init({ config: cfg });
-        console.log("CMS.init called");
+        console.log("CMS.init called (manual)");
       } else {
         console.error("CMS not loaded");
       }
