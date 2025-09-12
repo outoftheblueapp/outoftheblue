@@ -5,14 +5,10 @@ backend:
 media_folder: "static/uploads"
 public_folder: "/uploads"
 
-site_url: "https://out-of-the-blue.netlify.app"
-logo_url: "/brand-logo-v42.png"
-
 collections:
-  # Minimal, safe editor for your existing JSON file
   - name: "site_content_raw"
     label: "Site Content (Advanced)"
-    file: "content.json"
+    file: "outoftheblue_site_v4_12_rules_fix/content.json"
     format: "json"
     fields:
       - label: "content.json"
