@@ -22,37 +22,34 @@
     </script>
 
     <!-- Decap CMS -->
-    <script src="https://unpkg.com/decap-cms-app@^3.0.0/dist/decap-cms.js"></script>
-    <script>
-      if (window.CMS) {
-        const cfg = {
-          load_config_file: false,
-          backend: { name: 'git-gateway', branch: 'main' },
-          media_folder: 'static/uploads',
-          public_folder: '/uploads',
-          collections: [{
-            name: 'site_content_raw',
-            label: 'Site Content (Advanced)',
-            files: [{
-              file: 'outoftheblue_site_v4_12_rules_fix/content.json',
-              label: 'content.json',
-              name: 'raw',
-              format: 'json',
-              fields: [{
-                label: 'Raw JSON',
-                name: 'body',
-                widget: 'code',
-                default_language: 'json',
-                allow_language_selection: false
-              }]
-            }]
+  <script>
+  if (window.CMS) {
+    const cfg = {
+      load_config_file: false,
+      backend: { name: 'git-gateway', branch: 'main' },
+      media_folder: 'static/uploads',
+      public_folder: '/uploads',
+      collections: [{
+        name: 'site_content_raw',
+        label: 'Site Content (Advanced)',
+        files: [{
+          file: 'outoftheblue_site_v4_12_rules_fix/content.json',
+          label: 'content.json',
+          name: 'raw',
+          format: 'json',
+          fields: [{
+            label: 'Raw JSON',
+            name: 'body',
+            widget: 'code',
+            default_language: 'json',
+            allow_language_selection: false
           }]
-        };
-        CMS.init({ config: cfg });
-        console.log("CMS.init called with file collection");
-      } else {
-        console.error("CMS not loaded");
-      }
-    </script>
-  </body>
-</html>
+        }]
+      }]
+    };
+    CMS.init({ config: cfg });
+    console.log("CMS.init called with file collection");
+  } else {
+    console.error("CMS not loaded");
+  }
+</script>
