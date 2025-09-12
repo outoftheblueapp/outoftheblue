@@ -4,67 +4,97 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Back Office</title>
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; margin: 0; }
+      #boot { padding: 24px; }
+      .muted { opacity: .7; font-size: 14px; }
+    </style>
   </head>
   <body>
-    <h1>Back Office</h1>
-    <div>Loading editor… If this stays here, press F12 → Console for errors.</div>
+    <div id="boot">
+      <h1>Back Office</h1>
+      <div class="muted">Loading editor… If this stays here, open DevTools → Console.</div>
+    </div>
 
-    <!-- Netlify Identity (invite + login) -->
+    <!-- Netlify Identity (widget handles invite/reset/login) -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script>
-      if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
-        window.netlifyIdentity.acceptInvite().then(() => location.replace('/admin/'));
-      }
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('login', () => location.reload());
-        window.netlifyIdentity.on('logout', () => location.reload());
-      }
-    </script>
 
-    <!-- Tell Decap not to auto-load /admin/config.yml -->
+    <!-- IMPORTANT: prevent Decap from auto-loading /admin/config.yml -->
     <script>window.CMS_MANUAL_INIT = true;</script>
 
     <!-- Decap CMS (legacy bundle exposes window.CMS) -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
-    <!-- Manual init with inline config that edits your content.json -->
     <script>
-      console.log("INLINE CONFIG LOADED (manual init)");
-      if (window.CMS) {
-        const cfg = {
-          load_config_file: false,
-          backend: { name: 'git-gateway', branch: 'main' },
-          media_folder: 'static/uploads',
-          public_folder: '/uploads',
-          collections: [
-            {
+      // ------- Identity helpers & loop guard -------
+      (function () {
+        const log = (...a)=>{ try{console.log('[admin]',...a)}catch(e){} };
+
+        // If the URL is an Identity invite/recovery link but we're NOT on /admin,
+        // send the user to /admin so the widget can process it.
+        if ((/invite_token=|recovery_token=/.test(location.hash)) &&
+            !/^\/admin\/?/i.test(location.pathname)) {
+          location.replace('/admin/' + location.hash);
+        }
+
+        // Handle invite token completion on /admin
+        if (/invite_token=/.test(location.hash) && window.netlifyIdentity) {
+          window.netlifyIdentity.acceptInvite().then(() => {
+            history.replaceState(null, '', '/admin/'); // clean URL
+          }).catch(e => log('acceptInvite error', e));
+        }
+
+        // Avoid infinite reload loops: only redirect once after login per session
+        const once = key => {
+          if (sessionStorage.getItem(key)) return false;
+          sessionStorage.setItem(key, '1');
+          return true;
+        };
+
+        if (window.netlifyIdentity) {
+          window.netlifyIdentity.on('init', user => {
+            log('identity init, user:', !!user);
+            if (!user) {
+              window.netlifyIdentity.on('login', () => {
+                if (once('ni_login_redirect')) location.replace('/admin/');
+              });
+            }
+          });
+          // In case widget hasn’t initialized yet, open it on click from CMS
+          window.netlifyIdentity.on('error', e => log('identity error', e));
+        }
+
+        // ------- Decap CMS manual init with inline config -------
+        function initCMS(){
+          if (!window.CMS) { log('CMS not loaded yet'); return setTimeout(initCMS, 150); }
+          const config = {
+            load_config_file: false,
+            backend: { name: 'git-gateway', branch: 'main' },
+            media_folder: 'static/uploads',
+            public_folder: '/uploads',
+            collections: [{
               name: 'site_content_raw',
               label: 'Site Content (Advanced)',
-              files: [
-                {
-                  file: 'outoftheblue_site_v4_12_rules_fix/content.json',
-                  label: 'content.json',
-                  name: 'raw',
-                  format: 'json',
-                  fields: [
-                    {
-                      label: 'Raw JSON',
-                      name: 'body',
-                      widget: 'code',
-                      default_language: 'json',
-                      allow_language_selection: false
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        };
-        CMS.init({ config: cfg });
-        console.log("CMS.init called (manual)");
-      } else {
-        console.error("CMS not loaded");
-      }
+              files: [{
+                file: 'outoftheblue_site_v4_12_rules_fix/content.json',
+                label: 'content.json',
+                name: 'raw',
+                format: 'json',
+                fields: [{
+                  label: 'Raw JSON',
+                  name: 'body',
+                  widget: 'code',
+                  default_language: 'json',
+                  allow_language_selection: false
+                }]
+              }]
+            }]
+          };
+          log('calling CMS.init');
+          CMS.init({ config });
+        }
+        initCMS();
+      })();
     </script>
   </body>
 </html>
