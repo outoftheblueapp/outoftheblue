@@ -6,69 +6,82 @@
     <title>Back Office</title>
     <style>
       body { font-family: system-ui, Arial, sans-serif; margin: 0; }
-      #boot { padding: 24px; }
+      #wrap { padding: 24px; max-width: 900px; }
       .muted { opacity: .7; font-size: 14px; }
-      pre { background:#f6f8fa; padding:12px; overflow:auto; }
+      ul { line-height: 1.6; }
+      .ok { color: #0a7a2d; }
+      .err { color: #b00020; }
     </style>
-
-    <!-- helpful logging so a blank page isn't mysterious -->
-    <script>
-      (function () {
-        const log = (...a) => { try { console.log('[admin]', ...a); } catch(e){} };
-        window.__adminLog = log;
-        window.addEventListener('error', e => log('window error:', e.message));
-      })();
-    </script>
-
-    <!-- Try unpkg first; if it fails, load jsDelivr -->
-    <script src="https://unpkg.com/decap-cms-app@^3/dist/decap-cms.js"
-            onload="__adminLog('Decap CMS loaded from unpkg'); window.__decapLoaded = true;"
-            onerror="(function(){
-              __adminLog('unpkg failed, trying jsDelivr…');
-              var s=document.createElement('script');
-              s.src='https://cdn.jsdelivr.net/npm/decap-cms-app@3/dist/decap-cms.js';
-              s.onload=function(){__adminLog('Decap CMS loaded from jsDelivr'); window.__decapLoaded=true; try{CMS.init();}catch(e){__adminLog('CMS.init error (jsDelivr):', e)}};
-              document.head.appendChild(s);
-            })()">
-    </script>
   </head>
   <body>
-    <div id="boot">
+    <div id="wrap">
       <h1>Back Office</h1>
-      <div class="muted">Loading editor… If this stays here, press F12 → Console for errors.</div>
-      <div id="err"></div>
-      <script>
-        (function waitForCMS(){
-          if (window.__decapLoaded && window.CMS) {
-            try { CMS.init(); __adminLog('CMS.init called'); }
-            catch (e) {
-              __adminLog('CMS.init error (unpkg):', e);
-              document.getElementById('err').innerHTML =
-                '<p><strong>Init error:</strong> '+(e && e.message || e)+'</p>';
-            }
+      <div class="muted">This page self-checks each step so we know exactly where it fails.</div>
+      <ul id="status">
+        <li>Booting…</li>
+      </ul>
+    </div>
+
+    <!-- Identity (handles invite/login) -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <!-- Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+
+    <script>
+      const log = (msg, ok=true) => {
+        const li = document.createElement('li');
+        li.className = ok ? 'ok' : 'err';
+        li.textContent = (ok ? '✓ ' : '✗ ') + msg;
+        document.getElementById('status').appendChild(li);
+        console[ok ? 'log' : 'error']('[admin]', msg);
+      };
+
+      (async function main(){
+        try {
+          log('Identity script present: ' + !!window.netlifyIdentity);
+          if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
+            log('Accepting invite…');
+            await window.netlifyIdentity.acceptInvite();
+            location.replace('/admin/');
             return;
           }
-          setTimeout(waitForCMS, 200);
-        })();
-      </script>
-      <details style="margin-top:16px"><summary class="muted">Config URL</summary>
-        <pre>/admin/config.yml</pre>
-      </details>
-    </div>
+          if (window.netlifyIdentity) {
+            window.netlifyIdentity.on('login', () => location.reload());
+            window.netlifyIdentity.on('logout', () => location.reload());
+          }
+
+          // 1) Check CMS global
+          if (!window.CMS) { log('Decap CMS failed to load', false); return; }
+          log('Decap CMS loaded');
+
+          // 2) Inline config (no fetch of /admin/config.yml)
+          const cfg = {
+            load_config_file: false,
+            backend: { name: 'git-gateway', branch: 'main' },
+            media_folder: 'static/uploads',
+            public_folder: '/uploads',
+            collections: [{
+              name: 'site_content_raw',
+              label: 'Site Content (Advanced)',
+              file: 'outoftheblue_site_v4_12_rules_fix/content.json',
+              format: 'json',
+              fields: [{
+                label: 'content.json',
+                name: 'raw',
+                widget: 'code',
+                default_language: 'json',
+                allow_language_selection: false
+              }]
+            }]
+          };
+          log('Initializing CMS…');
+          CMS.init({ config: cfg });
+          log('CMS.init() called — if you don’t see the editor UI, check Identity/Git Gateway.');
+        } catch (e) {
+          log('Fatal error: ' + (e && e.message || e), false);
+        }
+      })();
+    </script>
   </body>
 </html>
-<!-- Netlify Identity widget: handles invite/login -->
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script>
-  // complete invite links automatically and return to /admin
-  if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
-    window.netlifyIdentity.acceptInvite().then(() => location.replace('/admin/'));
-  }
-  // refresh page when logging in/out so CMS sees the token
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on('login', () => location.reload());
-    window.netlifyIdentity.on('logout', () => location.reload());
-  }
-</script>
-
-
