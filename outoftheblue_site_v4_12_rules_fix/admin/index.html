@@ -57,4 +57,18 @@
     </div>
   </body>
 </html>
+<!-- Netlify Identity widget: handles invite/login -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  // complete invite links automatically and return to /admin
+  if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
+    window.netlifyIdentity.acceptInvite().then(() => location.replace('/admin/'));
+  }
+  // refresh page when logging in/out so CMS sees the token
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on('login', () => location.reload());
+    window.netlifyIdentity.on('logout', () => location.reload());
+  }
+</script>
+
 
