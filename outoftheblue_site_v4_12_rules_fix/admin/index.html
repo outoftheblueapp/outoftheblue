@@ -4,84 +4,55 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Back Office</title>
-    <style>
-      body { font-family: system-ui, Arial, sans-serif; margin: 0; }
-      #wrap { padding: 24px; max-width: 900px; }
-      .muted { opacity: .7; font-size: 14px; }
-      ul { line-height: 1.6; }
-      .ok { color: #0a7a2d; }
-      .err { color: #b00020; }
-    </style>
   </head>
   <body>
-    <div id="wrap">
-      <h1>Back Office</h1>
-      <div class="muted">This page self-checks each step so we know exactly where it fails.</div>
-      <ul id="status">
-        <li>Booting…</li>
-      </ul>
-    </div>
+    <h1>Back Office</h1>
+    <div>Loading editor… If this stays here, press F12 → Console for errors.</div>
 
-    <!-- Identity (handles invite/login) -->
+    <!-- Netlify Identity widget (handles invite + login) -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
+        window.netlifyIdentity.acceptInvite().then(() => location.replace('/admin/'));
+      }
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('login', () => location.reload());
+        window.netlifyIdentity.on('logout', () => location.reload());
+      }
+    </script>
 
     <!-- Decap CMS -->
-    <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
-
+    <script src="https://unpkg.com/decap-cms-app@^3.0.0/dist/decap-cms.js"></script>
     <script>
-      const log = (msg, ok=true) => {
-        const li = document.createElement('li');
-        li.className = ok ? 'ok' : 'err';
-        li.textContent = (ok ? '✓ ' : '✗ ') + msg;
-        document.getElementById('status').appendChild(li);
-        console[ok ? 'log' : 'error']('[admin]', msg);
-      };
-
-      (async function main(){
-        try {
-          log('Identity script present: ' + !!window.netlifyIdentity);
-          if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
-            log('Accepting invite…');
-            await window.netlifyIdentity.acceptInvite();
-            location.replace('/admin/');
-            return;
-          }
-          if (window.netlifyIdentity) {
-            window.netlifyIdentity.on('login', () => location.reload());
-            window.netlifyIdentity.on('logout', () => location.reload());
-          }
-
-          // 1) Check CMS global
-          if (!window.CMS) { log('Decap CMS failed to load', false); return; }
-          log('Decap CMS loaded');
-
-          // 2) Inline config (no fetch of /admin/config.yml)
-          const cfg = {
-            load_config_file: false,
-            backend: { name: 'git-gateway', branch: 'main' },
-            media_folder: 'static/uploads',
-            public_folder: '/uploads',
-            collections: [{
-              name: 'site_content_raw',
-              label: 'Site Content (Advanced)',
+      if (window.CMS) {
+        const cfg = {
+          load_config_file: false,
+          backend: { name: 'git-gateway', branch: 'main' },
+          media_folder: 'static/uploads',
+          public_folder: '/uploads',
+          collections: [{
+            name: 'site_content_raw',
+            label: 'Site Content (Advanced)',
+            files: [{
               file: 'outoftheblue_site_v4_12_rules_fix/content.json',
+              label: 'content.json',
+              name: 'raw',
               format: 'json',
               fields: [{
-                label: 'content.json',
-                name: 'raw',
+                label: 'Raw JSON',
+                name: 'body',
                 widget: 'code',
                 default_language: 'json',
                 allow_language_selection: false
               }]
             }]
-          };
-          log('Initializing CMS…');
-          CMS.init({ config: cfg });
-          log('CMS.init() called — if you don’t see the editor UI, check Identity/Git Gateway.');
-        } catch (e) {
-          log('Fatal error: ' + (e && e.message || e), false);
-        }
-      })();
+          }]
+        };
+        CMS.init({ config: cfg });
+        console.log("CMS.init called with file collection");
+      } else {
+        console.error("CMS not loaded");
+      }
     </script>
   </body>
 </html>
