@@ -9,7 +9,7 @@
     <h1>Back Office</h1>
     <div>Loading editor… If this stays here, press F12 → Console for errors.</div>
 
-    <!-- Netlify Identity widget (handles invite + login) -->
+    <!-- Netlify Identity widget (invite + login) -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
       if (location.hash && /invite_token=/.test(location.hash) && window.netlifyIdentity) {
@@ -21,11 +21,18 @@
       }
     </script>
 
-    <!-- Decap CMS (must be this exact script tag with src) -->
+    <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms-app@^3.0.0/dist/decap-cms.js"></script>
 
-    <!-- Start CMS with an inline config that edits your content.json -->
+    <!-- INLINE INIT -->
     <script>
+      // Marker so we can verify this exact file deployed:
+      console.log("INLINE CONFIG LOADED");
+      var marker = document.createElement('div');
+      marker.textContent = "• Inline boot script present";
+      marker.style.opacity = ".6";
+      document.body.appendChild(marker);
+
       if (window.CMS) {
         const cfg = {
           load_config_file: false,
