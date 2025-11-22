@@ -1,18 +1,207 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: outoftheblueapp/outoftheblue
   branch: main
 
-media_folder: "static/uploads"
-public_folder: "/uploads"
+media_folder: "outoftheblue_site_v4_12_rules_fix/media"
+public_folder: "/media"
+
+locale: "en"
 
 collections:
   - name: "site_content_raw"
     label: "Site Content (Advanced)"
-    file: "outoftheblue_site_v4_12_rules_fix/content.json"
-    format: "json"
-    fields:
-      - label: "content.json"
-        name: "raw"
-        widget: "code"
-        default_language: "json"
-        allow_language_selection: false
+    delete: false
+    editor:
+      preview: false
+    files:
+      - label: "Content JSON"
+        name: "site_content"
+        file: "outoftheblue_site_v4_12_rules_fix/content.json"
+        fields:
+          # ===== Hebrew =====
+          - label: "עברית (Hebrew)"
+            name: "he"
+            widget: "object"
+            fields:
+              - { label: "Welcome title", name: "welcomeTitle", widget: "string" }
+              - { label: "Welcome intro", name: "welcomeIntro", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+              - label: "Menu"
+                name: "menu"
+                widget: "list"
+                summary: "{{fields.label}} ({{fields.key}})"
+                fields:
+                  - { label: "Key", name: "key", widget: "string" }
+                  - { label: "Label", name: "label", widget: "string" }
+
+              - label: "Sections"
+                name: "sections"
+                widget: "object"
+                fields:
+                  - label: "House rules"
+                    name: "rules"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - { label: "Title", name: "title", widget: "string" }
+                      - label: "Content (each line supports Markdown + links)"
+                        name: "content"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Arrival — Suite 313"
+                    name: "arrival_313"
+                    hint: "Stored under sections.arrival.suite313"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Lines"
+                        name: "suite313"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Arrival — Suite 413"
+                    name: "arrival_413"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Lines"
+                        name: "suite413"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Appliances — Suite 313"
+                    name: "appliances_313"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Items"
+                        name: "suite313"
+                        widget: "list"
+                        field: { label: "Item", name: "item", widget: "string" }
+
+                  - label: "Appliances — Suite 413"
+                    name: "appliances_413"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Items"
+                        name: "suite413"
+                        widget: "list"
+                        field: { label: "Item", name: "item", widget: "string" }
+
+                  - label: "Important information"
+                    name: "info"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - { label: "Title", name: "title", widget: "string" }
+                      - label: "Content (supports Markdown + links)"
+                        name: "content"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Useful information"
+                    name: "useful"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - { label: "Title", name: "title", widget: "string" }
+                      - label: "Content (supports Markdown + links)"
+                        name: "content"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+          # ===== English =====
+          - label: "English"
+            name: "en"
+            widget: "object"
+            fields:
+              - { label: "Welcome title", name: "welcomeTitle", widget: "string" }
+              - { label: "Welcome intro", name: "welcomeIntro", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+              - label: "Menu"
+                name: "menu"
+                widget: "list"
+                summary: "{{fields.label}} ({{fields.key}})"
+                fields:
+                  - { label: "Key", name: "key", widget: "string" }
+                  - { label: "Label", name: "label", widget: "string" }
+
+              - label: "Sections"
+                name: "sections"
+                widget: "object"
+                fields:
+                  - label: "House rules"
+                    name: "rules"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - { label: "Title", name: "title", widget: "string" }
+                      - label: "Content (supports Markdown + links)"
+                        name: "content"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Arrival — Suite 313"
+                    name: "arrival_313"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Lines"
+                        name: "suite313"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Arrival — Suite 413"
+                    name: "arrival_413"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Lines"
+                        name: "suite413"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Appliances — Suite 313"
+                    name: "appliances_313"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Items"
+                        name: "suite313"
+                        widget: "list"
+                        field: { label: "Item", name: "item", widget: "string" }
+
+                  - label: "Appliances — Suite 413"
+                    name: "appliances_413"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - label: "Items"
+                        name: "suite413"
+                        widget: "list"
+                        field: { label: "Item", name: "item", widget: "string" }
+
+                  - label: "Important information"
+                    name: "info"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - { label: "Title", name: "title", widget: "string" }
+                      - label: "Content (supports Markdown + links)"
+                        name: "content"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
+
+                  - label: "Useful information"
+                    name: "useful"
+                    widget: "object"
+                    fields:
+                      - { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false }
+                      - { label: "Title", name: "title", widget: "string" }
+                      - label: "Content (supports Markdown + links)"
+                        name: "content"
+                        widget: "list"
+                        field: { label: "Line", name: "line", widget: "markdown", buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] }
