@@ -1,18 +1,4 @@
-# Send /admin to the folder (trailing slash)
-[[redirects]]
-from = "/admin"
-to = "/admin/"
-status = 301
-force = true
-
-# IMPORTANT: serve real files under /admin (config.yml, index.html, etc.)
-[[redirects]]
-from = "/admin/*"
-to = "/admin/:splat"
-status = 200
-force = true
-
-# SPA fallback for everything else (your app in the subfolder)
+# SPA fallback — send everything to your app's index.html in the subfolder
 [[redirects]]
 from = "/*"
 to = "/outoftheblue_site_v4_12_rules_fix/index.html"
