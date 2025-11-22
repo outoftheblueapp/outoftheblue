@@ -1,12 +1,18 @@
-[build]
-  publish = "outoftheblue_site_v4_12_rules_fix"
+# Serve the CMS from the root /admin folder (bypass SPA)
+[[redirects]]
+from = "/admin"
+to = "/admin/"
+status = 301
+force = true
 
 [[redirects]]
-  from = "/admin/*"
-  to = "/admin/index.html"
-  status = 200
+from = "/admin/*"
+to = "/admin/index.html"
+status = 200
+force = true
 
+# All other paths go to your app in the subfolder (SPA)
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/outoftheblue_site_v4_12_rules_fix/index.html"
+status = 200
