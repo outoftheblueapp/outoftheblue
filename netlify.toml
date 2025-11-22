@@ -1,17 +1,18 @@
-# Serve the CMS from the root /admin folder (bypass SPA)
+# Send /admin to the folder (trailing slash)
 [[redirects]]
 from = "/admin"
 to = "/admin/"
 status = 301
 force = true
 
+# IMPORTANT: serve real files under /admin (config.yml, index.html, etc.)
 [[redirects]]
 from = "/admin/*"
-to = "/admin/index.html"
+to = "/admin/:splat"
 status = 200
 force = true
 
-# All other paths go to your app in the subfolder (SPA)
+# SPA fallback for everything else (your app in the subfolder)
 [[redirects]]
 from = "/*"
 to = "/outoftheblue_site_v4_12_rules_fix/index.html"
