@@ -5,86 +5,147 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Back Office</title>
   <meta name="robots" content="noindex" />
+  <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; }
+    #boot-log { padding: 12px; background: #fff5c2; color: #222; border-bottom: 1px solid #eee; font-size: 14px; }
+    #boot-log.error { background: #ffe1e1; color: #8b0000; }
+    #nc-root { min-height: calc(100vh - 44px); }
+  </style>
 </head>
 <body>
-<script>
-  // Manual init so we don't fetch /admin/config.yml at all.
-  window.CMS_MANUAL_INIT = true;
+  <div id="boot-log">Loading editor…</div>
+  <div id="nc-root"></div>
 
-  const sectionFields = [
-    {
-      label: "House rules", name: "rules", widget: "object",
-      fields: [
-        { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
-        { label: "Title", name: "title", widget: "string" },
-        { label: "Lines (Markdown OK)", name: "content", widget: "list",
-          field: { label: "Line", name: "line", widget: "markdown",
-                   buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] } }
-      ]
-    },
-    {
-      label: "Arrival", name: "arrival", widget: "object",
-      fields: [
-        { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
-        { label: "Suite 313 – lines", name: "suite313", widget: "list",
-          field: { label: "Line", name: "line", widget: "markdown",
-                   buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] } },
-        { label: "Suite 413 – lines", name: "suite413", widget: "list",
-          field: { label: "Line", name: "line", widget: "markdown",
-                   buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] } }
-      ]
-    },
-    {
-      label: "Appliances", name: "appliances", widget: "object",
-      fields: [
-        { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
-        { label: "Suite 313 – items", name: "suite313", widget: "list",
-          field: { label: "Item", name: "item", widget: "string" } },
-        { label: "Suite 413 – items", name: "suite413", widget: "list",
-          field: { label: "Item", name: "item", widget: "string" } }
-      ]
-    },
-    {
-      label: "Important information", name: "info", widget: "object",
-      fields: [
-        { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
-        { label: "Title", name: "title", widget: "string" },
-        { label: "Lines (Markdown OK)", name: "content", widget: "list",
-          field: { label: "Line", name: "line", widget: "markdown",
-                   buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] } }
-      ]
-    },
-    {
-      label: "Useful information", name: "useful", widget: "object",
-      fields: [
-        { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
-        { label: "Title", name: "title", widget: "string" },
-        { label: "Lines (Markdown OK)", name: "content", widget: "list",
-          field: { label: "Line", name: "line", widget: "markdown",
-                   buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] } }
-      ]
+  <script>
+    // Show boot errors on the page (not only console)
+    function setBootStatus(msg, isError) {
+      var el = document.getElementById('boot-log');
+      if (!el) return;
+      el.textContent = msg;
+      el.className = isError ? 'error' : '';
     }
-  ];
 
-  const config = {
-    backend: { name: "github", repo: "outoftheblueapp/outoftheblue", branch: "main" },
-    media_folder: "outoftheblue_site_v4_12_rules_fix/media",
-    public_folder: "/media",
-    collections: [
-      {
-        name: "site_content",
-        label: "Site Content",
-        delete: false,
-        editor: { preview: false },
-        files: [
-          {
-            label: "Content (Hebrew & English)",
-            name: "content",
-            file: "outoftheblue_site_v4_12_rules_fix/content.json",
+    // Defensive: wait until Decap is available
+    (function startWhenReady() {
+      if (typeof window.CMS === 'undefined') {
+        return setTimeout(startWhenReady, 50);
+      }
+      try {
+        // Do not fetch /admin/config.yml — provide config inline
+        window.CMS_MANUAL_INIT = true;
+
+        // Avoid modern syntax (no spread, etc.) for max compatibility
+        var sectionLineField = {
+          label: "Line", name: "line", widget: "markdown",
+          buttons: ["bold","italic","link","bulleted-list","numbered-list"],
+          editor_components: []
+        };
+
+        function linesList(label, name) {
+          return { label: label, name: name, widget: "list", field: sectionLineField };
+        }
+        function itemsList(label, name) {
+          return { label: label, name: name, widget: "list", field: { label: "Item", name: "item", widget: "string" } };
+        }
+
+        function commonSections(labelPrefix) {
+          return {
+            label: "Sections", name: "sections", widget: "object",
             fields: [
-              {
-                label: "עברית (Hebrew)", name: "he", widget: "object",
+              { label: "House rules", name: "rules", widget: "object",
                 fields: [
-                  { label: "Welcome title", name: "welcomeTitle", widget: "string" },
-                  { label: "Welcome intro (Markdown OK)", name: "welcomeIntro", widget: "markdown",
+                  { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Lines (Markdown OK)", name: "content", widget: "list", field: sectionLineField }
+                ]},
+              { label: "Arrival", name: "arrival", widget: "object",
+                fields: [
+                  { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
+                  linesList("Suite 313 – lines","suite313"),
+                  linesList("Suite 413 – lines","suite413")
+                ]},
+              { label: "Appliances", name: "appliances", widget: "object",
+                fields: [
+                  { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
+                  itemsList("Suite 313 – items","suite313"),
+                  itemsList("Suite 413 – items","suite413")
+                ]},
+              { label: "Important information", name: "info", widget: "object",
+                fields: [
+                  { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Lines (Markdown OK)", name: "content", widget: "list", field: sectionLineField }
+                ]},
+              { label: "Useful information", name: "useful", widget: "object",
+                fields: [
+                  { label: "Enabled", name: "enabled", widget: "boolean", default: true, required: false },
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Lines (Markdown OK)", name: "content", widget: "list", field: sectionLineField }
+                ]}
+            ]
+          };
+        }
+
+        var config = {
+          backend: { name: "github", repo: "outoftheblueapp/outoftheblue", branch: "main" },
+          media_folder: "outoftheblue_site_v4_12_rules_fix/media",
+          public_folder: "/media",
+          collections: [
+            {
+              name: "site_content",
+              label: "Site Content",
+              delete: false,
+              editor: { preview: false },
+              files: [
+                {
+                  label: "Content (Hebrew & English)",
+                  name: "content",
+                  file: "outoftheblue_site_v4_12_rules_fix/content.json",
+                  fields: [
+                    {
+                      label: "עברית (Hebrew)", name: "he", widget: "object",
+                      fields: [
+                        { label: "Welcome title", name: "welcomeTitle", widget: "string" },
+                        { label: "Welcome intro (Markdown OK)", name: "welcomeIntro", widget: "markdown",
+                          buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] },
+                        { label: "Menu", name: "menu", widget: "list", summary: "{{fields.label}} ({{fields.key}})",
+                          fields: [
+                            { label: "Key", name: "key", widget: "string" },
+                            { label: "Label", name: "label", widget: "string" }
+                          ]},
+                        commonSections("he")
+                      ]
+                    },
+                    {
+                      label: "English", name: "en", widget: "object",
+                      fields: [
+                        { label: "Welcome title", name: "welcomeTitle", widget: "string" },
+                        { label: "Welcome intro (Markdown OK)", name: "welcomeIntro", widget: "markdown",
+                          buttons: ["bold","italic","link","bulleted-list","numbered-list"], editor_components: [] },
+                        { label: "Menu", name: "menu", widget: "list", summary: "{{fields.label}} ({{fields.key}})",
+                          fields: [
+                            { label: "Key", name: "key", widget: "string" },
+                            { label: "Label", name: "label", widget: "string" }
+                          ]},
+                        commonSections("en")
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
+
+        CMS.init({ config: config });
+        setBootStatus("Editor loaded. If you don't see the UI, try a hard refresh (Cmd/Ctrl+Shift+R).", false);
+      } catch (e) {
+        console.error(e);
+        setBootStatus("Editor failed to load: " + (e && e.message ? e.message : e), true);
+      }
+    })();
+  </script>
+</body>
+</html>
