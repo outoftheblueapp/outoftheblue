@@ -1,4 +1,11 @@
-# SPA fallback — send everything to your app's index.html in the subfolder
+# 1) Let the app serve its own files from the subfolder (JSON, images, CSS, JS)
+[[redirects]]
+from = "/outoftheblue_site_v4_12_rules_fix/*"
+to = "/outoftheblue_site_v4_12_rules_fix/:splat"
+status = 200
+force = true
+
+# 2) SPA fallback for anything else -> app's index.html
 [[redirects]]
 from = "/*"
 to = "/outoftheblue_site_v4_12_rules_fix/index.html"
