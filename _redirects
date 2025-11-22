@@ -1,6 +1,0 @@
-# Always serve the back office from the root /admin folder
-/admin      /admin/             301!
-/admin/*    /admin/index.html   200
-
-# SPA fallback for your app living in the subfolder
-/*          /outoftheblue_site_v4_12_rules_fix/index.html  200
