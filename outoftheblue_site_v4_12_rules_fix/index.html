@@ -209,24 +209,13 @@
       const m = s.match(/https?:\/\/[^\s)\]]+/i);
       return m ? m[0].replace(/[),.]+$/,'') : null;
     }
- function renderUsefulLine(line){
-  // If it's a header line ending with ":" (e.g., "Recommended dining:"), render it bold
-  const isHeader = (line || '').trim().endsWith(':');
-  if (isHeader) {
-    return <p className="mb-3 leading-relaxed"><strong>{line}</strong></p>;
-  }
-
-  const url = extractUrl(line);
-  if(url){
-    const label = line
-      .replace(/https?:\/\/[^\s)\]]+/i,'')
-      .replace(/[()]/g,'')
-      .trim() || 'Open';
-    return <p className="mb-3 leading-relaxed"><a href={url} target="_blank" rel="noopener">{label}</a></p>;
-  }
-
-  return <p className="mb-3 leading-relaxed">{line}</p>;
-}
+    function renderUsefulLine(line){
+      const url = extractUrl(line);
+      if(url){
+        const label = line.replace(/https?:\/\/[^\s)\]]+/i,'').replace(/[()]/g,'').trim() || 'Open';
+        return <p className="mb-3 leading-relaxed"><a href={url} target="_blank" rel="noopener">{label}</a></p>;
+      }
+      return <p className="mb-3 leading-relaxed">{line}</p>;
     }
 
     // Rules page content component
