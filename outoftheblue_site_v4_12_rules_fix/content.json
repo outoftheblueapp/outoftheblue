@@ -3,30 +3,12 @@
     "welcomeTitle": "ברוכים הבאים",
     "welcomeIntro": "ברוכים הבאים ל־Out of the Blue ! אנחנו שמחים שבחרתם להתארח אצלנו. הממשק הזה הוא הקונסיארג' האישי שלכם והוא ינגיש לכם את כל המידע שאתם צריכים כדי להבטיח שהות רגועה ונעימה.",
     "menu": [
-      {
-        "key": "ask",
-        "label": "שאלו אותי כל דבר"
-      },
-      {
-        "key": "rules",
-        "label": "חוקי הבית"
-      },
-      {
-        "key": "arrival",
-        "label": "הוראות הגעה וכניסה"
-      },
-      {
-        "key": "info",
-        "label": "מידע חשוב"
-      },
-      {
-        "key": "appliances",
-        "label": "הוראות שימוש במכשירים"
-      },
-      {
-        "key": "useful",
-        "label": "מידע שימושי"
-      }
+      { "key": "ask", "label": "שאלו אותי כל דבר" },
+      { "key": "rules", "label": "חוקי הבית" },
+      { "key": "arrival", "label": "הוראות הגעה וכניסה" },
+      { "key": "info", "label": "מידע חשוב" },
+      { "key": "appliances", "label": "הוראות שימוש במכשירים" },
+      { "key": "useful", "label": "מידע שימושי" }
     ],
     "sections": {
       "rules": {
@@ -45,14 +27,14 @@
           "חניה: החניה בכחול־לבן ברחוב מול הבניין היא בתשלום, בימים א׳–ש׳ בין השעות 08:00–21:00. קיימת חלופת חניה חינמית במגרש הכורכר הגדול הסמוך לבניין מצפון, ובו בדרך כלל יש מקום.",
           "קוד הכניסה ללובי הוא 0246  עולים במעלית לקומה 4. פונים ימינה במסדרון עד שתגיעו לסוויטה שלכם.",
           "דלת הסוויטה נעולה עם מנעול אלקטרוני עם קוד אישי שישלח אליכם. בכל פעם שהדלת נסגרת היא ננעלת אוטומטית; לפתיחה מבפנים לחצו על הכפתור השחור. בבקשה לא לסובב ידנית את הבריח - זה פוגע במנגנון",
-          "אינטרנט אלחוטי: שם הרשת דיויד. סיסמה 0522471704"
+          "אינטרנט אלחוטי: שם הרשת david. סיסמה 0522471704"
         ],
         "suite413": [
           "כתובת: העלייה 65, נהרייה",
           "חניה: החניה בכחול־לבן ברחוב מול הבניין היא בתשלום, בימים א׳–ש׳ בין השעות 08:00–21:00. קיימת חלופת חניה חינמית במגרש הכורכר הגדול הסמוך לבניין מצפון, ובו בדרך כלל יש מקום.",
           "קוד הכניסה ללובי הוא 0246  עולים במעלית לקומה 4. פונים ימינה במסדרון עד שתגיעו לסוויטה שלכם.",
-          "המפתח לדלת נמצא בקופסת קוד בתוך ארון החשמל משמאל לדלת. תקבלו את קוד הקופסה מראש. לפני העזיבה: נועלים, מחזירים לקופסה וסוגרים עד לנעילה.",
-          "אינטרנט אלחוטי: שם הרשת דיויד. סיסמה 0522471704"
+          "דלת הסוויטה נעולה עם מנעול אלקטרוני עם קוד אישי שישלח אליכם. בכל פעם שהדלת נסגרת היא ננעלת אוטומטית; לפתיחה מבפנים לחצו על הכפתור השחור. בבקשה לא לסובב ידנית את הבריח - זה פוגע במנגנון",
+          "אינטרנט אלחוטי: שם הרשת david. סיסמה 0522471704"
         ]
       },
       "appliances": {
@@ -72,7 +54,7 @@
       "info": {
         "title": "מידע חשוב",
         "content": [
-          "מים חמים: יש דוד שמש, ובדרך כלל זה מספיק. אם צריך, הדליקו את הדוד לפי ההסבר הבא  ואל תשכחו לכבות אחרי השימוש.",
+          "מים חמים: לוח הפעלת הדוד הוא לוח הזכוכית שמתחת למתג האור. בסוויטה 413 לחיצה אחת על סמל ההדלקה/כיבוי מפעילה את הדוד והסמל נדלק בכחול; לחיצה נוספת מכבה. בסוויטה 313 לחיצה אחת על סמל ראש המקלחת מפעילה את הדוד והסמל נדלק באדום. כדי לכבות, לחצו שוב ושוב על הסמל — הוא יחליף צבע פעמיים ובסוף יכבה. סמל ה־Wi-Fi תמיד מואר.",
           "טלוויזיה: הטלוויזיה היא טלוויזיה חכמה; אפשר לשדר מהנייד (mirroring) או לצפות דרך היישומון של  Free TV",
           "אשפה ומחזור: יש פח מתחת לכיור עם שקיות להחלפה. ניתן לפנות אשפה לנקודת הפסולת העירונית, ליד המדרכה, בקצה הדרומי של הבניין. יש שם פחים לקרטון, אריזות ופסולת רגילה. תהיו נחמדים ותפרידו.",
           "מקלט: בבניין יש מקלט מאובזר עם שירותים. הכניסה מהלובי דרך המדרגות לפי השילוט.",
@@ -107,30 +89,12 @@
     "welcomeTitle": "Welcome",
     "welcomeIntro": "Welcome to Out of the Blue! We are delighted you chose to be our guests. Consider this interface your private concierge. Here you’ll find all of the information you need in order to guarantee a calm and relaxing stay.",
     "menu": [
-      {
-        "key": "ask",
-        "label": "Ask me anything"
-      },
-      {
-        "key": "rules",
-        "label": "House rules"
-      },
-      {
-        "key": "arrival",
-        "label": "Arrival essentials"
-      },
-      {
-        "key": "info",
-        "label": "Important information"
-      },
-      {
-        "key": "appliances",
-        "label": "Appliance instructions"
-      },
-      {
-        "key": "useful",
-        "label": "Useful information"
-      }
+      { "key": "ask", "label": "Ask me anything" },
+      { "key": "rules", "label": "House rules" },
+      { "key": "arrival", "label": "Arrival essentials" },
+      { "key": "info", "label": "Important information" },
+      { "key": "appliances", "label": "Appliance instructions" },
+      { "key": "useful", "label": "Useful information" }
     ],
     "sections": {
       "rules": {
@@ -156,7 +120,7 @@
           "Address: HaAliya 65, Nahariya",
           "Parking: Street parking along the blue-and-white curbs in front of the building is paid parking, enforced seven days a week from 08:00 to 21:00. A free alternative is available in the large gravel parking lot immediately north of the building, where there is usually space.",
           "Building Entry: Lobby code is 0246. Take the elevator to the 4th floor, turn right, and walk down the corridor to your suite.",
-          "The key is stored in a lockbox inside the electrical cabinet to the left of the door. You’ll receive the lockbox code in advance. At the end of your stay, please lock the door, return the key to the box, and make sure it’s properly closed.",
+          "The door can be opened with a personal code that will be sent to you. Each time the door closes, it locks automatically. To open from the inside, press the black button. Please do not turn the bolt manually. It damages the mechanism.",
           "Wi-Fi: Network name: david | Password: 0522471704"
         ]
       },
@@ -177,7 +141,7 @@
       "info": {
         "title": "Important information",
         "content": [
-          "Hot Water: The solar heater usually provides enough hot water. If needed, you can switch on the electric boiler by following these instructions.  Please remember to switch it off after use.",
+          "Hot Water: The boiler activation panel is the glass panel below the light switch. In Suite 413, one tap on the on/off icon turns it on and the icon lights up blue; another tap shuts it off. In Suite 313, one tap on the showerhead icon turns it on and the icon illuminates red. To shut it off, repeatedly tap the icon — it will change colors twice and eventually shut off. The Wi-Fi icon is always illuminated.",
           "Television: The TV is a Smart TV - you can mirror your phone or use the FreeTV app.",
           "Trash & Recycling: There’s a bin under the kitchen sink with spare bags. Municipal bins are located at the southern end of the building, near the sidewalk. Please separate cardboard, packaging, and general waste.",
           "Shelter: The building has a fully equipped shelter with restrooms. Access is from the lobby via the stairs, following the signs.",
