@@ -19,7 +19,7 @@
           "נא לא לעשות מסיבות או להשמיע מוסיקה חזקה. נא לשמור על השקט בין 14:00 ל-16:00 ובין 23:00 ל-07:00",
           "נא לא להדליק אש או לעשות מנגל",
           "מומלץ להוריד נעליים בכניסה",
-          "לפני העזיבה: אנא עיינו בהנחיות העזיבה שבפרק מידע חשוב לפני היציאה מהסוויטה."
+          "לפני העזיבה: אנא עיינו בהנחיות העזיבה שבפרק \"מידע חשוב\" לפני היציאה מהסוויטה."
         ]
       },
       "arrival": {
@@ -33,4 +33,126 @@
         "suite413": [
           "כתובת: העלייה 65, נהרייה",
           "חניה: החניה בכחול־לבן ברחוב מול הבניין היא בתשלום, בימים א׳–ש׳ בין השעות 08:00–21:00. קיימת חלופת חניה חינמית במגרש הכורכר הגדול הסמוך לבניין מצפון, ובו בדרך כלל יש מקום.",
-          "קוד הכניסה ללובי הוא 0246. עולים במעלית לקומה
+          "קוד הכניסה ללובי הוא 0246. עולים במעלית לקומה 4 ופונים ימינה במסדרון עד שתגיעו לסוויטה שלכם.",
+          "דלת הסוויטה נעולה עם מנעול אלקטרוני עם קוד אישי שישלח אליכם. בכל פעם שהדלת נסגרת היא ננעלת אוטומטית. לפתיחה מבפנים לחצו על הכפתור השחור. נא לא לסובב ידנית את הבריח — הדבר פוגע במנגנון.",
+          "אינטרנט אלחוטי: שם הרשת david. סיסמה: 0522471704"
+        ]
+      },
+      "appliances": {
+        "suite313": ["מיקרוגל", "מכונת אספרסו", "תמי 4"],
+        "suite413": ["תנור", "כיריים אינדוקציה", "מכונת אספרסו", "תמי 4", "Bluetooth באמבטיה"]
+      },
+      "info": {
+        "title": "מידע חשוב",
+        "content": [
+          "מים חמים: ברוב המקרים דוד השמש מספיק. אם צריך להפעיל את הדוד החשמלי — לוח ההפעלה נמצא בלוח הזכוכית מתחת למתג התאורה. בסוויטה 413: נגיעה אחת על אייקון ההדלקה/כיבוי מפעילה והאייקון נדלק בכחול; נגיעה נוספת מכבה. אייקון ה־Wi-Fi תמיד מואר. בסוויטה 313: נגיעה אחת על אייקון ראש המקלחת מפעילה והאייקון נדלק באדום; לכיבוי יש ללחוץ שוב ושוב — האייקון יחליף צבע פעמיים ולבסוף יכבה. אייקון ה־Wi-Fi תמיד מואר. נא לכבות את הדוד אחרי השימוש.",
+          "טלוויזיה: הטלוויזיה היא טלוויזיה חכמה; אפשר לשדר מהנייד (mirroring) או לצפות דרך היישומון של Free TV",
+          "אשפה ומחזור: יש פח מתחת לכיור עם שקיות להחלפה. ניתן לפנות אשפה לנקודת הפסולת העירונית, ליד המדרכה, בקצה הדרומי של הבניין. יש שם פחים לקרטון, אריזות ופסולת רגילה. תהיו נחמדים ותפרידו.",
+          "מקלט: בבניין יש מקלט מאובזר עם שירותים. הכניסה מהלובי דרך המדרגות לפי השילוט.",
+          "בריכה: הבריכה פעילה מיוני ועד אחרי סוכות בשעות 06:00–23:00. מגיעים לבריכה דרך הלובי: יורדים ממנו ברגל לקומה -1 ויוצאים מהדלת האחורית. נא לא להיכנס למעלית וללובי רטובים. ניתן גם להגיע דרך גרם המדרגות הדרומי הסמוך לדירה. הכניסה לשטח הבריכה והיציאה ממנו הן דרך קרוסלה עם שבב (צ’יפ). הצ'יפים של הבריכה מחכים לכם במטבח; אחד לכל אורח. בסוף השהייה מחזירים למקום. אובדן צ’יפ יחויב בתשלום. שימו לב! בבריכה אין מציל; הרחצה באחריותכם. נא להישמע להוראות המוצבות במקום כולל איסור הכנסת זכוכית לשטח הבריכה.",
+          "ים: החוף הסמוך לבניין לא מוכרז; יש חופים מוכרזים באזור (עם שירותי הצלה ומתקנים לרוחצים). אם באתם מחוף לא מוכרז, יש צינור שטיפה בפינה הצפון-מערבית של מתחם הבריכה. במקרה הצורך יש בדירה ערכת ניקוי זפת מתחת לכיור.",
+          "מגבות: נא לא להוציא מגבות רחצה מהדירה. יש מגבות חוף ייעודיות. יש מתקן ייבוש מגבות במסתור ליד המקלחת.",
+          "קניות: סופר “חוף הדקל” נמצא ברחוב העלייה, כמה עשרות מטרים דרומה. הוא פתוח 7 ימים בשעות 07:00–22:00. ניתן למצוא שם מאפים טריים, פירות וירקות, יינות וציוד חיוני.",
+          "הנחיות עזיבה (Check-out): 1) אנא קחו איתכם את האשפה. 2) ודאו שכיביתם אורות, מזגנים והדוד. 3) אל תשאירו במקרר מזון מתכלה. 4) סגרו חלונות ותריסים חשמליים. 5) בדקו שלא שכחתם פריטים (למשל מטענים). 6) החזירו את הצ'יפים של הבריכה והשלטים למקומם, לטובת האורחים הבאים. 7) ביציאה ודאו שהדלת סגורה ונעולה. 8) שלחו לנו הודעה שהשלמתם עזיבה.",
+          "אנשי קשר:",
+          "אורנה רוזנבלט 050-2718411",
+          "דיויד רוזנבלט 052-2471704",
+          "ניהול הבניין – חברת רועי-קום – 052-5090040 (אך ורק במקרי חירום הקשורים לשטחים הציבוריים)"
+        ]
+      },
+      "useful": {
+        "title": "מידע שימושי",
+        "content": [
+          "טיולים מומלצים בגליל המערבי https://www.tiuli.com/tracks?dests=7",
+          "מה עושים בנהריה? https://www.nahariya.muni.il/318/",
+          "מרפאות ובתי מרחקת https://www.nahariya.muni.il/%D7%9C%D7%95%D7%97-%D7%AA%D7%95%D7%A8%D7%A0%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%AA%D7%99-%D7%9E%D7%A8%D7%A7%D7%97%D7%AA/",
+          "מסעדות מומלצות:",
+          "נהריה - דיינר אלכסנדר https://alexanderd.co.il/",
+          "נהריה – בר יין ומעדנייה כרם בעיר https://kerembayir.co.il/",
+          "נהריה – מסעדה יוונית יאמאס https://tabitisrael.co.il/site/meze",
+          "נהריה – מסעדה לבנונית ארזים https://www.ozrothagalil.org.il/poi/%D7%9E%D7%A1%D7%A2%D7%93%D7%AA-%D7%90%D7%A8%D7%96%D7%99%D7%9D-%D7%A0%D7%94%D7%A8%D7%99%D7%94/",
+          "לוחמי הגטאות – מסעדת מרקטו https://tabitisrael.co.il/site/mercato",
+          "כפר יאסיף – מסעדת דגים נסיב https://www.naseeb-rest.com/"
+        ]
+      }
+    }
+  },
+  "en": {
+    "welcomeTitle": "Welcome",
+    "welcomeIntro": "Welcome to Out of the Blue! We are delighted you chose to be our guests. Consider this interface your private concierge. Here you’ll find all of the information you need in order to guarantee a calm and relaxing stay.",
+    "menu": [
+      { "key": "ask", "label": "Ask me anything" },
+      { "key": "rules", "label": "House rules" },
+      { "key": "arrival", "label": "Arrival essentials" },
+      { "key": "info", "label": "Important information" },
+      { "key": "appliances", "label": "Appliance instructions" },
+      { "key": "useful", "label": "Useful information" }
+    ],
+    "sections": {
+      "rules": {
+        "title": "House rules",
+        "content": [
+          "Smoking is prohibited anywhere in the apartment including the balcony. Smoking is prohibited in all parts of the building including the pool.",
+          "No pets please",
+          "No parties or loud music. Keep quiet between 14:00 to 16:00 and 23:00 to 07:00",
+          "Do not light fire or BBQ",
+          "It is recommended to take off your shoes when entering the suite",
+          "Before leaving: please review the checkout information in the Important information section."
+        ]
+      },
+      "arrival": {
+        "suite313": [
+          "Address: HaAliya 65, Nahariya",
+          "Parking: Blue-and-white curb parking on the street in front of the building requires payment, seven days a week from 08:00 to 21:00. A free option is the large gravel lot just north of the building, where there is usually space.",
+          "Building Entry: Lobby code is 0246. Take the elevator to the 4th floor, turn right, and walk down the corridor to your suite.",
+          "The door can be opened with a personal code that will be sent to you. Each time the door closes, it locks automatically. To open from the inside, press the black button. Please do not turn the bolt manually. It damages the mechanism.",
+          "Wi-Fi: Network name: david | Password: 0522471704"
+        ],
+        "suite413": [
+          "Address: HaAliya 65, Nahariya",
+          "Parking: Blue-and-white curb parking on the street in front of the building requires payment, seven days a week from 08:00 to 21:00. A free option is the large gravel lot just north of the building, where there is usually space.",
+          "Building Entry: Lobby code is 0246. Take the elevator to the 4th floor, turn right, and walk down the corridor to your suite.",
+          "The door can be opened with a personal code that will be sent to you. Each time the door closes, it locks automatically. To open from the inside, press the black button. Please do not turn the bolt manually. It damages the mechanism.",
+          "Wi-Fi: Network name: david | Password: 0522471704"
+        ]
+      },
+      "appliances": {
+        "suite313": ["Microwave", "Coffee machine", "Hot/Cold water dispenser"],
+        "suite413": ["Oven", "Induction burners", "Coffee machine", "Hot/Cold water dispenser", "Bathtub Bluetooth"]
+      },
+      "info": {
+        "title": "Important information",
+        "content": [
+          "Hot Water: The solar heater usually provides enough hot water. If you need to switch on the electric boiler, the control panel is the glass panel below the light switch. Suite 413: one tap on the on/off icon turns it on and the icon lights up blue; another tap turns it off. The Wi-Fi icon is always illuminated. Suite 313: one tap on the showerhead icon turns it on and the icon illuminates red; to turn it off, keep tapping — it will change colors twice and eventually shut off. The Wi-Fi icon is always illuminated. Please remember to switch the boiler off after use.",
+          "Television: The TV is a Smart TV — you can mirror your phone or use the FreeTV app.",
+          "Trash & Recycling: There’s a bin under the kitchen sink with spare bags. Municipal bins are located at the southern end of the building, near the sidewalk. Please separate cardboard, packaging, and general waste.",
+          "Shelter: The building has a fully equipped shelter with restrooms. Access is from the lobby via the stairs, following the signs.",
+          "Pool: The pool is open from June through after Sukkot, from 06:00 to 23:00. To access the pool area, from the lobby, walk down to floor -1 and exit through the back door. Please don’t enter the elevator or lobby when wet. You can also use the southern staircase near the suite. Entry and exit are through a turnstile using a chip. One chip per guest will be waiting for you in the kitchen. Please return them at the end of your stay. Lost chips will be charged. There is no lifeguard on duty! Swimming is at your own risk. Please follow the posted rules, including no glass in the pool area.",
+          "Beach: The beach near the property is not supervised. There are lifeguarded beaches nearby, each with showers. If you come back from a non-supervised beach, you can rinse off with the hose in the northwest corner of the pool area. A tar removal kit is available under the kitchen sink if needed.",
+          "Towels: Please don’t remove bath towels from the suite. Separate beach towels are provided. A towel rack is located in the alcove next to the shower.",
+          "Supermarket: “Hof HaDekel” supermarket is just a short walk south on HaAliya Street. Open daily 07:00–22:00. You’ll find fresh baked goods, fruits and vegetables, wines, and all essentials.",
+          "Checkout: 1) Please take your trash with you. 2) Make sure you’ve turned off the lights, air conditioning, and the boiler. 3) Don’t leave perishables in the fridge. 4) Close windows and electric blinds. 5) Check for forgotten items (e.g., chargers). 6) Return pool chips and remote controls to their place for the benefit of the next guests. 7) When you exit, make sure the door is closed and locked. 8) Send us a message to let us know you’ve checked out.",
+          "Contacts",
+          "Orna Rosenblatt: 050-2718411",
+          "David Rosenblatt: 052-2471704",
+          "Building management - Roi-Com - only in case of an emergency in public areas: 052-5090040"
+        ]
+      },
+      "useful": {
+        "title": "Useful information",
+        "content": [
+          "Recommended nature attractions in the Western Galilee",
+          "Things to see and do in Nahariya",
+          "Clinics and pharmacies",
+          "Recommended dining",
+          "Nahariya – Alexander diner",
+          "Nahariya – Wine bar and delicatessen Kerem Baeer",
+          "Nahariya – Greek restaurant Yamas",
+          "Nahariya – Lebanese restaurant Arazim",
+          "Lochamay Hagetaot – Mercato restaurant",
+          "Kfar Yasif – Nasib fish and seafood"
+        ]
+      }
+    }
+  }
+}
