@@ -27,6 +27,7 @@
 </head>
 <body>
   <div id="root"></div>
+
   <script type="text/babel">
     const isRoot = () => location.pathname === '/';
     const rulesKey = 'oob_rules_accepted';
@@ -38,11 +39,20 @@
       const [lang] = React.useState(getLang());
       const [data, setData] = React.useState(null);
       const isLanding = isRoot();
-      React.useEffect(()=>{ fetch('/content.json').then(r=>r.json()).then(setData).catch(()=>setData({error:true})); },[]);
+
+      React.useEffect(()=>{
+        fetch('/content.json')
+          .then(r=>r.json())
+          .then(setData)
+          .catch(()=>setData({error:true}));
+      },[]);
+
       if(!data) return <div style={{padding:'2rem'}}>Loading…</div>;
       if(data.error) return <div style={{padding:'2rem'}}>Content failed to load.</div>;
+
       const L = data[lang] || data.he;
       const dir = lang==='he' ? 'rtl' : 'ltr';
+
       return (
         <div dir={dir}>
           {!isLanding && <Header lang={lang} /> }
@@ -97,8 +107,17 @@
       }, [lang]);
 
       const to = (key) => key==='ask' ? '/ask?lang='+lang : '/section/'+key+'?lang='+lang;
-      const [showNotice, setShowNotice] = React.useState(false);
-      const noticeText = lang==='he' ? 'נא להסכים לחוקי הבית' : 'Please accept house rules';
+
+      // Stage 1: hide unfinished items completely
+      const hiddenKeys = new Set(['ask','appliances']);
+
+      // Menu items come from content.json (L.menu)
+      // - Hide ask/appliances
+      // - Also allow a future "enabled:false" if you decide to add that later
+      const menuItems = (L.menu || [])
+        .filter(item => item && item.key)
+        .filter(item => !hiddenKeys.has(item.key))
+        .filter(item => item.enabled !== false);
 
       return (
         <main className="mx-auto max-w-6xl px-5 py-10">
@@ -106,44 +125,22 @@
           <p className="opacity-80 mb-6 leading-relaxed">{stripBrackets(L.welcomeIntro)}</p>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a href={to('ask')} className="card block hover:shadow-lg transition">
-              <div className="text-lg font-semibold mb-1">{lang==='he'?'שאלו אותי כל דבר':'Ask me anything'}</div>
-            </a>
-
-            <a href={to('rules')} className="card block hover:shadow-lg transition">
-              <div className="text-lg font-semibold mb-1">
-                {lang==='he'?'חוקי הבית':'House rules'} <span className="text-sm opacity-70">({lang==='he'?'חובה לקרוא':'must read'})</span>
-              </div>
-            </a>
-
-            {/* Arrival link remains normal (no extra gating now) */}
-            <a href={to('arrival')} className="card block hover:shadow-lg transition">
-              <div className="text-lg font-semibold mb-1">{lang==='he'?'הוראות הגעה וכניסה':'Arrival essentials'}</div>
-            </a>
-
-            <a href={to('info')} className="card block hover:shadow-lg transition">
-              <div className="text-lg font-semibold mb-1">{lang==='he'?'מידע חשוב':'Important information'}</div>
-            </a>
-
-            <a href={to('appliances')} className="card block hover:shadow-lg transition">
-              <div className="text-lg font-semibold mb-1">{lang==='he'?'הוראות שימוש במכשירים':'Appliance instructions'}</div>
-            </a>
-
-            <a href={to('useful')} className="card block hover:shadow-lg transition">
-              <div className="text-lg font-semibold mb-1">{lang==='he'?'מידע שימושי':'Useful information'}</div>
-            </a>
+            {menuItems.map((item) => {
+              const isRules = item.key === 'rules';
+              return (
+                <a key={item.key} href={to(item.key)} className="card block hover:shadow-lg transition">
+                  <div className="text-lg font-semibold mb-1">
+                    {item.label}
+                    {isRules && (
+                      <span className="text-sm opacity-70">
+                        {" "}{lang==='he' ? "(חובה לקרוא)" : "(must read)"}
+                      </span>
+                    )}
+                  </div>
+                </a>
+              );
+            })}
           </div>
-
-          {showNotice &&
-            <div className="notice" onClick={()=>setShowNotice(false)}>
-              <div className="box" onClick={(e)=>e.stopPropagation()}>
-                {noticeText}
-                <div className="mt-3 text-right">
-                  <button className="btn" onClick={()=>setShowNotice(false)}>{lang==='he'?'סגור':'Close'}</button>
-                </div>
-              </div>
-            </div>
-          }
         </main>
       );
     }
@@ -152,7 +149,7 @@
       return <a className="btn inline-block my-2" href={'/welcome?lang='+lang}>{lang==='he'?'חזרה לתפריט':'Back to main menu'}</a>;
     }
 
-    // Ask page
+    // Ask page (kept in code; just hidden from menu for now)
     function AskPage({lang}){
       const [data,setData]=React.useState(null);
       const [q,setQ]=React.useState('');
@@ -311,6 +308,7 @@
       return (v==='en'?'en':'he');
     }
   </script>
+
   <link rel="icon" href="/brand-logo-v42.png" />
 </body>
 </html>
