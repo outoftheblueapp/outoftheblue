@@ -235,6 +235,16 @@
 
     // Router
     const path = location.pathname;
+    // Global gate: require accepting house rules before accessing anything (except landing + rules page)
+const langForGate = getLang();
+const acceptedForGate = (localStorage.getItem('oob_rules_accepted') === 'yes');
+const isRulesPage = path === '/section/rules' || path.startsWith('/section/rules/');
+const isLandingPage = path === '/';
+
+if (!acceptedForGate && !isLandingPage && !isRulesPage) {
+  location.replace('/section/rules?lang=' + langForGate);
+}
+
     if(path==='/ask'){
       const lang = getLang();
       ReactDOM.createRoot(document.getElementById('root')).render(<AskPage lang={lang}/>);
