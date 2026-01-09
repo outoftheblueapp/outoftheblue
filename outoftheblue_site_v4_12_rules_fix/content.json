@@ -39,18 +39,8 @@
         ]
       },
       "appliances": {
-        "suite313": [
-          "מיקרוגל",
-          "מכונת אספרסו",
-          "תמי 4"
-        ],
-        "suite413": [
-          "תנור",
-          "כיריים אינדוקציה",
-          "מכונת אספרסו",
-          "תמי 4",
-          "Bluetooth באמבטיה"
-        ]
+        "suite313": ["מיקרוגל", "מכונת אספרסו", "תמי 4"],
+        "suite413": ["תנור", "כיריים אינדוקציה", "מכונת אספרסו", "תמי 4", "Bluetooth באמבטיה"]
       },
       "info": {
         "title": "מידע חשוב",
@@ -137,18 +127,8 @@
         ]
       },
       "appliances": {
-        "suite313": [
-          "Microwave",
-          "Coffee machine",
-          "Hot/Cold water dispenser"
-        ],
-        "suite413": [
-          "Oven",
-          "Induction burners",
-          "Coffee machine",
-          "Hot/Cold water dispenser",
-          "Bathtub Bluetooth"
-        ]
+        "suite313": ["Microwave", "Coffee machine", "Hot/Cold water dispenser"],
+        "suite413": ["Oven", "Induction burners", "Coffee machine", "Hot/Cold water dispenser", "Bathtub Bluetooth"]
       },
       "info": {
         "title": "Important information",
@@ -183,7 +163,7 @@
         "content": [
           "Recommended nature attractions in the Western Galilee https://www.tiuli.com/tracks?dests=7",
           "Things to see and do in Nahariya https://www.nahariya.muni.il/318/",
-          "Clinics and pharmacies https://www.nahariya.muni.il/%D7%9C%D7%95%D7%97-%D7%AA%D7%95%D7%A8%D7%A0%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%AA%D7%99-%D7%9E%D7%A8%D7%97%D7%A7%D7%AA/",
+          "Clinics and pharmacies https://www.nahariya.muni.il/%D7%9C%D7%95%D7%97-%D7%AA%D7%95%D7%A8%D7%A0%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%AA%D7%99-%D7%9E%D7%A8%D7%A7%D7%97%D7%AA/",
           "Recommended dining:",
           "Nahariya – Alexander diner https://alexanderd.co.il/",
           "Nahariya – Greek restaurant Yamas https://tabitisrael.co.il/site/meze",
