@@ -3,12 +3,12 @@
     "welcomeTitle": "ברוכים הבאים",
     "welcomeIntro": "ברוכים הבאים ל־Out of the Blue ! אנחנו שמחים שבחרתם להתארח אצלנו. הממשק הזה הוא הקונסיארג' האישי שלכם והוא ינגיש לכם את כל המידע שאתם צריכים כדי להבטיח שהות רגועה ונעימה.",
     "menu": [
-      { "key": "ask", "label": "שאלו אותי כל דבר" },
       { "key": "rules", "label": "חוקי הבית" },
       { "key": "arrival", "label": "הוראות הגעה וכניסה" },
       { "key": "info", "label": "מידע חשוב" },
       { "key": "appliances", "label": "הוראות שימוש במכשירים" },
-      { "key": "useful", "label": "מידע שימושי" }
+      { "key": "useful", "label": "מידע שימושי" },
+      { "key": "ask", "label": "שאלו אותי כל דבר" }
     ],
     "sections": {
       "rules": {
@@ -91,12 +91,12 @@
     "welcomeTitle": "Welcome",
     "welcomeIntro": "Welcome to Out of the Blue! We are delighted you chose to be our guests. Consider this interface your private concierge. Here you’ll find all of the information you need in order to guarantee a calm and relaxing stay.",
     "menu": [
-      { "key": "ask", "label": "Ask me anything" },
       { "key": "rules", "label": "House rules" },
       { "key": "arrival", "label": "Arrival essentials" },
       { "key": "info", "label": "Important information" },
       { "key": "appliances", "label": "Appliance instructions" },
-      { "key": "useful", "label": "Useful information" }
+      { "key": "useful", "label": "Useful information" },
+      { "key": "ask", "label": "Ask me anything" }
     ],
     "sections": {
       "rules": {
