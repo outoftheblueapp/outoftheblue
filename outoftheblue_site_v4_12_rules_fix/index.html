@@ -22,16 +22,16 @@
     .notice .box { background:#fff; padding:1rem 1.25rem; border-radius:1rem; box-shadow:0 10px 30px rgba(15,23,42,.15) }
 
     .useful-link {
-    color: var(--deep);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(15,23,42,0.25);
-    cursor: pointer;
-  }
+      color: var(--deep);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(15,23,42,0.25);
+      cursor: pointer;
+    }
 
-  .useful-link:hover {
-    color: var(--sea-600);
-    border-bottom-color: var(--sea-600);
-  }
+    .useful-link:hover {
+      color: var(--sea-600);
+      border-bottom-color: var(--sea-600);
+    }
   </style>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -120,12 +120,9 @@
 
       const to = (key) => key==='ask' ? '/ask?lang='+lang : '/section/'+key+'?lang='+lang;
 
-      // Stage 1: hide unfinished items completely
-      const hiddenKeys = new Set(['appliances']);
+      // Nothing hidden at the moment (you can re-add keys later if needed)
+      const hiddenKeys = new Set([]);
 
-      // Menu items come from content.json (L.menu)
-      // - Hide ask/appliances
-      // - Also allow a future "enabled:false" if you decide to add that later
       const menuItems = (L.menu || [])
         .filter(item => item && item.key)
         .filter(item => !hiddenKeys.has(item.key))
@@ -139,16 +136,42 @@
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {menuItems.map((item) => {
               const isRules = item.key === 'rules';
+              const isAsk = item.key === 'ask';
+
               return (
-                <a key={item.key} href={to(item.key)} className="card block hover:shadow-lg transition">
-                  <div className="text-lg font-semibold mb-1">
-                    {item.label}
-                    {isRules && (
-                      <span className="text-sm opacity-70">
-                        {" "}{lang==='he' ? "(חובה לקרוא)" : "(must read)"}
+                <a
+                  key={item.key}
+                  href={to(item.key)}
+                  className={
+                    (isAsk
+                      ? "card block hover:shadow-lg transition border-2 border-[var(--sea)] bg-[rgba(79,195,220,0.10)] sm:col-span-2 lg:col-span-3"
+                      : "card block hover:shadow-lg transition")
+                  }
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="text-lg font-semibold mb-1">
+                      {item.label}
+                      {isRules && (
+                        <span className="text-sm opacity-70">
+                          {" "}{lang==='he' ? "(חובה לקרוא)" : "(must read)"}
+                        </span>
+                      )}
+                    </div>
+
+                    {isAsk && (
+                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--sea)] text-white whitespace-nowrap">
+                        {lang==='he' ? 'צ׳אט' : 'Chat'}
                       </span>
                     )}
                   </div>
+
+                  {isAsk && (
+                    <p className="opacity-75 mt-1 leading-relaxed">
+                      {lang==='he'
+                        ? 'דברו עם Blue — הקונסיארג׳ הדיגיטלי שלכם'
+                        : 'Chat with Blue — your digital concierge'}
+                    </p>
+                  )}
                 </a>
               );
             })}
@@ -161,13 +184,14 @@
       return <a className="btn inline-block my-2" href={'/welcome?lang='+lang}>{lang==='he'?'חזרה לתפריט':'Back to main menu'}</a>;
     }
 
-    // Ask page (kept in code; just hidden from menu for now)
+    // Ask page (kept in code; now styled in menu)
     function AskPage({lang}){
       const [data,setData]=React.useState(null);
       const [q,setQ]=React.useState('');
       const [hits,setHits]=React.useState([]);
       React.useEffect(()=>{ fetch('/content.json').then(r=>r.json()).then(setData); },[]);
       const dir = lang==='he'?'rtl':'ltr';
+
       const onAsk=(e)=>{
         e.preventDefault();
         if(!data) return;
@@ -181,6 +205,7 @@
         pushAll(L.sections.arrival?.suite413,'arrival-413');
         pushAll(L.sections.appliances?.suite313,'appliances-313');
         pushAll(L.sections.appliances?.suite413,'appliances-413');
+
         const qn = q.trim().toLowerCase();
         const scored = texts.map(o=>{
           const t=o.t.toLowerCase();
@@ -190,18 +215,33 @@
         }).filter(o=>o.score>0).sort((a,b)=>b.score-a.score).slice(0,12);
         setHits(scored);
       };
+
       return <div dir={dir} className="mx-auto max-w-3xl px-5 py-10">
         <BackToMenu lang={lang}/>
         <h1 className="text-3xl font-semibold mb-4">{lang==='he'?'שאלו אותי כל דבר':'Ask me anything'}</h1>
+
+        <p className="opacity-80 mb-4 leading-relaxed">
+          {lang==='he'
+            ? 'היי, אני Blue 👋 כתבו שאלה ואנסה למצוא את המידע הרלוונטי מתוך המדריך.'
+            : 'Hi, I’m Blue 👋 Type a question and I’ll try to find the relevant info in the guide.'}
+        </p>
+
         <form onSubmit={onAsk} className="flex gap-2 mb-4">
           <input className="flex-1 border rounded-xl px-3 py-2" placeholder={lang==='he'?'כתבו שאלה...':'Type a question...'} value={q} onChange={e=>setQ(e.target.value)} />
-          <button className="btn" type="submit">{lang==='he'?'חיפוש':'Search'}</button>
+          <button className="btn" type="submit">{lang==='he'?'שאל/י':'Ask'}</button>
         </form>
+
         <div>
-          {hits.length===0 ? <p className="opacity-70">{lang==='he'?'תוצאות יוצגו כאן.':'Results will appear here.'}</p> :
-            <div className="space-y-2">
-              {hits.map((h,i)=>(<div key={i} className="card">{h.t}<div className="text-xs opacity-60 mt-1">{h.tag}</div></div>))}
-            </div>
+          {hits.length===0
+            ? <p className="opacity-70">{lang==='he'?'התוצאות יוצגו כאן.':'Results will appear here.'}</p>
+            : <div className="space-y-2">
+                {hits.map((h,i)=>(
+                  <div key={i} className="card">
+                    {h.t}
+                    <div className="text-xs opacity-60 mt-1">{h.tag}</div>
+                  </div>
+                ))}
+              </div>
           }
         </div>
       </div>;
@@ -217,32 +257,31 @@
       }
       return <p className="mb-3 leading-relaxed">{line}</p>;
     }
+
     function extractUrl(s){
       const m = s.match(/https?:\/\/[^\s)\]]+/i);
       return m ? m[0].replace(/[),.]+$/,'') : null;
     }
-    
-  function renderUsefulLine(line){
-  const text = (line || '').trim();
-  const url = extractUrl(text);
 
-  // Header: no URL and ends with colon
-  if (!url && text.endsWith(':')) {
-    return <p className="mb-3 leading-relaxed"><strong>{text}</strong></p>;
-  }
+    function renderUsefulLine(line){
+      const text = (line || '').trim();
+      const url = extractUrl(text);
 
-  if (url) {
-    const label = text
-      .replace(/https?:\/\/[^\s)\]]+/i,'')
-      .replace(/[()]/g,'')
-      .trim() || 'Open';
-    return <p className="mb-3 leading-relaxed"><a className="useful-link" href={url} target="_blank" rel="noopener">{label}</a></p>;
+      // Header: no URL and ends with colon
+      if (!url && text.endsWith(':')) {
+        return <p className="mb-3 leading-relaxed"><strong>{text}</strong></p>;
+      }
 
-  }
+      if (url) {
+        const label = text
+          .replace(/https?:\/\/[^\s)\]]+/i,'')
+          .replace(/[()]/g,'')
+          .trim() || 'Open';
+        return <p className="mb-3 leading-relaxed"><a className="useful-link" href={url} target="_blank" rel="noopener">{label}</a></p>;
+      }
 
-  return <p className="mb-3 leading-relaxed">{text}</p>;
-}
-
+      return <p className="mb-3 leading-relaxed">{text}</p>;
+    }
 
     // Rules page content component
     function RulesContent({sec, lang}){
@@ -261,15 +300,16 @@
 
     // Router
     const path = location.pathname;
-    // Global gate: require accepting house rules before accessing anything (except landing + rules page)
-const langForGate = getLang();
-const acceptedForGate = (localStorage.getItem('oob_rules_accepted') === 'yes');
-const isRulesPage = path === '/section/rules' || path.startsWith('/section/rules/');
-const isLandingPage = path === '/';
 
-if (!acceptedForGate && !isLandingPage && !isRulesPage) {
-  location.replace('/section/rules?lang=' + langForGate);
-}
+    // Global gate: require accepting house rules before accessing anything (except landing + rules page)
+    const langForGate = getLang();
+    const acceptedForGate = (localStorage.getItem('oob_rules_accepted') === 'yes');
+    const isRulesPage = path === '/section/rules' || path.startsWith('/section/rules/');
+    const isLandingPage = path === '/';
+
+    if (!acceptedForGate && !isLandingPage && !isRulesPage) {
+      location.replace('/section/rules?lang=' + langForGate);
+    }
 
     if(path==='/ask'){
       const lang = getLang();
