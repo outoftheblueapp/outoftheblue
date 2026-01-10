@@ -32,8 +32,6 @@
     const isRoot = () => location.pathname === '/';
     const rulesKey = 'oob_rules_accepted';
     const stripBrackets = (s) => (s||'').replace(/\[[\s\S]*?\]/g, '').replace(/[\[\]]/g,'').trim();
-    const getAccepted = () => { try { return localStorage.getItem(rulesKey) === 'yes'; } catch(e){ return false; } };
-    const setAccepted = (v) => { try { localStorage.setItem(rulesKey, v ? 'yes' : 'no'); } catch(e){} };
 
     function App(){
       const [lang] = React.useState(getLang());
@@ -85,13 +83,9 @@
             <img src="/brand-logo-v42.png" alt="Out of the Blue" style={{width:'min(85vw, 340px)'}} />
             <div className="flex gap-3 mt-2">
               <a className="rounded-2xl bg-[var(--sea)] text-white px-5 py-3 shadow hover:bg-[var(--sea-600)]"
-                 href={accepted ? "/welcome?lang=en" : "/section/rules?lang=en"}>
-                English
-              </a>
+                 href={accepted ? "/welcome?lang=en" : "/section/rules?lang=en"}>English</a>
               <a className="rounded-2xl bg-[var(--sea)] text-white px-5 py-3 shadow hover:bg-[var(--sea-600)]"
-                 href={accepted ? "/welcome?lang=he" : "/section/rules?lang=he"}>
-                עברית
-              </a>
+                 href={accepted ? "/welcome?lang=he" : "/section/rules?lang=he"}>עברית</a>
             </div>
           </div>
         </section>
@@ -99,7 +93,6 @@
     }
 
     function Welcome({ L, lang }){
-      // Safety: if not accepted, redirect to rules first
       React.useEffect(()=>{
         if (localStorage.getItem('oob_rules_accepted') !== 'yes') {
           location.href = '/section/rules?lang=' + lang;
@@ -107,13 +100,8 @@
       }, [lang]);
 
       const to = (key) => key==='ask' ? '/ask?lang='+lang : '/section/'+key+'?lang='+lang;
-
-      // Stage 1: hide unfinished items completely
       const hiddenKeys = new Set(['ask','appliances']);
 
-      // Menu items come from content.json (L.menu)
-      // - Hide ask/appliances
-      // - Also allow a future "enabled:false" if you decide to add that later
       const menuItems = (L.menu || [])
         .filter(item => item && item.key)
         .filter(item => !hiddenKeys.has(item.key))
@@ -123,193 +111,45 @@
         <main className="mx-auto max-w-6xl px-5 py-10">
           <h1 className="text-3xl font-semibold mb-3">{L.welcomeTitle}</h1>
           <p className="opacity-80 mb-6 leading-relaxed">{stripBrackets(L.welcomeIntro)}</p>
-
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {menuItems.map((item) => {
-              const isRules = item.key === 'rules';
-              return (
-                <a key={item.key} href={to(item.key)} className="card block hover:shadow-lg transition">
-                  <div className="text-lg font-semibold mb-1">
-                    {item.label}
-                    {isRules && (
-                      <span className="text-sm opacity-70">
-                        {" "}{lang==='he' ? "(חובה לקרוא)" : "(must read)"}
-                      </span>
-                    )}
-                  </div>
-                </a>
-              );
-            })}
+            {menuItems.map(item => (
+              <a key={item.key} href={to(item.key)} className="card block hover:shadow-lg transition">
+                <div className="text-lg font-semibold mb-1">{item.label}</div>
+              </a>
+            ))}
           </div>
         </main>
       );
     }
 
-    function BackToMenu({lang}){
-      return <a className="btn inline-block my-2" href={'/welcome?lang='+lang}>{lang==='he'?'חזרה לתפריט':'Back to main menu'}</a>;
-    }
-
-    // Ask page (kept in code; just hidden from menu for now)
-    function AskPage({lang}){
-      const [data,setData]=React.useState(null);
-      const [q,setQ]=React.useState('');
-      const [hits,setHits]=React.useState([]);
-      React.useEffect(()=>{ fetch('/content.json').then(r=>r.json()).then(setData); },[]);
-      const dir = lang==='he'?'rtl':'ltr';
-      const onAsk=(e)=>{
-        e.preventDefault();
-        if(!data) return;
-        const L = data[lang]||data.he;
-        const texts=[];
-        const pushAll = (arr, tag)=> (arr||[]).forEach(t=>texts.push({t, tag}));
-        pushAll(L.sections.rules?.content,'rules');
-        pushAll(L.sections.info?.content,'info');
-        pushAll(L.sections.useful?.content,'useful');
-        pushAll(L.sections.arrival?.suite313,'arrival-313');
-        pushAll(L.sections.arrival?.suite413,'arrival-413');
-        pushAll(L.sections.appliances?.suite313,'appliances-313');
-        pushAll(L.sections.appliances?.suite413,'appliances-413');
-        const qn = q.trim().toLowerCase();
-        const scored = texts.map(o=>{
-          const t=o.t.toLowerCase();
-          let score=0;
-          qn.split(/\s+/).forEach(w=>{ if(w && t.includes(w)) score+=1; });
-          return {...o, score};
-        }).filter(o=>o.score>0).sort((a,b)=>b.score-a.score).slice(0,12);
-        setHits(scored);
-      };
-      return <div dir={dir} className="mx-auto max-w-3xl px-5 py-10">
-        <BackToMenu lang={lang}/>
-        <h1 className="text-3xl font-semibold mb-4">{lang==='he'?'שאלו אותי כל דבר':'Ask me anything'}</h1>
-        <form onSubmit={onAsk} className="flex gap-2 mb-4">
-          <input className="flex-1 border rounded-xl px-3 py-2" placeholder={lang==='he'?'כתבו שאלה...':'Type a question...'} value={q} onChange={e=>setQ(e.target.value)} />
-          <button className="btn" type="submit">{lang==='he'?'חיפוש':'Search'}</button>
-        </form>
-        <div>
-          {hits.length===0 ? <p className="opacity-70">{lang==='he'?'תוצאות יוצגו כאן.':'Results will appear here.'}</p> :
-            <div className="space-y-2">
-              {hits.map((h,i)=>(<div key={i} className="card">{h.t}<div className="text-xs opacity-60 mt-1">{h.tag}</div></div>))}
-            </div>
-          }
-        </div>
-      </div>;
-    }
-
-    // Info/Useful helpers
-    function renderInfoLine(line){
-      const idx = line.indexOf(':');
-      if(idx>0){
-        const a = line.slice(0, idx).trim();
-        const b = line.slice(idx+1).trim();
-        return <p className="mb-3 leading-relaxed"><strong>{a}:</strong> {b}</p>;
-      }
-      return <p className="mb-3 leading-relaxed">{line}</p>;
-    }
     function extractUrl(s){
       const m = s.match(/https?:\/\/[^\s)\]]+/i);
       return m ? m[0].replace(/[),.]+$/,'') : null;
     }
+
     function renderUsefulLine(line){
-      const url = extractUrl(line);
-      if(url){
-        const label = line.replace(/https?:\/\/[^\s)\]]+/i,'').replace(/[()]/g,'').trim() || 'Open';
-        return <p className="mb-3 leading-relaxed"><a href={url} target="_blank" rel="noopener">{label}</a></p>;
+      const text = (line || '').trim();
+      const url = extractUrl(text);
+
+      // HEADER: no URL + ends with ":" → bold
+      if (!url && text.endsWith(':')) {
+        return <p className="mb-3 leading-relaxed"><strong>{text}</strong></p>;
       }
-      return <p className="mb-3 leading-relaxed">{line}</p>;
-    }
 
-    // Rules page content component
-    function RulesContent({sec, lang}){
-      const [checked,setChecked] = React.useState(false);
-      return <div>
-        {(sec?.content||[]).map((p,i)=>(<p key={i} className="mb-3 leading-relaxed">{p}</p>))}
-        <div className="mt-4 flex items-center gap-2">
-          <input id="acceptRules" type="checkbox" checked={checked} onChange={e=>setChecked(e.target.checked)} />
-          <label htmlFor="acceptRules">{lang==='he'?'מסכים/ה לחוקי הבית':'I accept the house rules'}</label>
-        </div>
-        <button className="btn mt-3" disabled={!checked} onClick={()=>{ try{localStorage.setItem('oob_rules_accepted','yes');}catch(e){}; location.href='/welcome?lang='+lang; }}>
-          {lang==='he'?'אישור':'Accept'}
-        </button>
-      </div>;
-    }
+      if (url) {
+        const label = text
+          .replace(/https?:\/\/[^\s)\]]+/i,'')
+          .replace(/[()]/g,'')
+          .trim() || 'Open';
 
-    // Router
-    const path = location.pathname;
-    // Global gate: require accepting house rules before accessing anything (except landing + rules page)
-const langForGate = getLang();
-const acceptedForGate = (localStorage.getItem('oob_rules_accepted') === 'yes');
-const isRulesPage = path === '/section/rules' || path.startsWith('/section/rules/');
-const isLandingPage = path === '/';
+        return (
+          <p className="mb-3 leading-relaxed">
+            <a href={url} target="_blank" rel="noopener">{label}</a>
+          </p>
+        );
+      }
 
-if (!acceptedForGate && !isLandingPage && !isRulesPage) {
-  location.replace('/section/rules?lang=' + langForGate);
-}
-
-    if(path==='/ask'){
-      const lang = getLang();
-      ReactDOM.createRoot(document.getElementById('root')).render(<AskPage lang={lang}/>);
-    } else if(path.startsWith('/section/')){
-      const parts = path.split('/').filter(Boolean);
-      const key = parts[1];
-      const suite = parts[2];
-      const lang = getLang();
-
-      fetch('/content.json').then(r=>r.json()).then(data=>{
-        const L = data[lang] || data.he;
-        const dir = lang==='he' ? 'rtl' : 'ltr';
-        const root = document.getElementById('root');
-
-        if((key==='arrival'||key==='appliances') && (suite==='313' || suite==='413')){
-          const sec = L.sections[key];
-          const content = suite==='313' ? (sec.suite313||[]) : (sec.suite413||[]);
-          ReactDOM.createRoot(root).render(
-            <div dir={dir}>
-              <Header lang={lang} />
-              <main className="mx-auto max-w-3xl px-5 py-10">
-                <BackToMenu lang={lang}/>
-                <h1 className="text-3xl font-semibold mb-6">{(key==='arrival' ? (lang==='he'?'הוראות הגעה וכניסה':'Arrival essentials') : (lang==='he'?'הוראות שימוש במכשירים':'Appliance instructions'))+' · '+(lang==='he'?(suite==='313'?'סוויטה 313':'סוויטה 413'):('Suite '+suite))}</h1>
-                {content.map((p,i)=>(<p key={i} className="mb-3 leading-relaxed">{p}</p>))}
-              </main>
-            </div>
-          );
-        } else if(key==='arrival' || key==='appliances'){
-          ReactDOM.createRoot(root).render(
-            <div dir={dir}>
-              <Header lang={lang} />
-              <main className="mx-auto max-w-3xl px-5 py-10">
-                <BackToMenu lang={lang}/>
-                <h1 className="text-3xl font-semibold mb-6">{key==='arrival' ? (lang==='he'?'הוראות הגעה וכניסה':'Arrival essentials') : (lang==='he'?'הוראות שימוש במכשירים':'Appliance instructions')}</h1>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <a className="card block" href={'/section/'+key+'/313?lang='+lang}>
-                    <h2 className="text-xl font-semibold mb-2">{lang==='he'?'סוויטה 313':'Suite 313'}</h2>
-                    <p className="opacity-80">{lang==='he'?'הוראות לסוויטה 313':'Instructions for Suite 313'}</p>
-                  </a>
-                  <a className="card block" href={'/section/'+key+'/413?lang='+lang}>
-                    <h2 className="text-xl font-semibold mb-2">{lang==='he'?'סוויטה 413':'Suite 413'}</h2>
-                    <p className="opacity-80">{lang==='he'?'הוראות לסוויטה 413':'Instructions for Suite 413'}</p>
-                  </a>
-                </div>
-              </main>
-            </div>
-          );
-        } else if(key==='info' || key==='useful' || key==='rules'){
-          const sec = L.sections[key];
-          ReactDOM.createRoot(root).render(
-            <div dir={dir}>
-              <Header lang={lang} />
-              <main className="mx-auto max-w-3xl px-5 py-10">
-                <BackToMenu lang={lang}/>
-                <h1 className="text-3xl font-semibold mb-6">{sec?.title || key}</h1>
-                {key==='rules' ? <RulesContent sec={sec} lang={lang}/> :
-                 key==='info' ? (sec?.content||[]).map((p,i)=> <React.Fragment key={i}>{renderInfoLine(p)}</React.Fragment>) :
-                 (sec?.content||[]).map((p,i)=> <React.Fragment key={i}>{renderUsefulLine(p)}</React.Fragment>)}
-              </main>
-            </div>
-          );
-        }
-      }).catch(()=>{ document.getElementById('root').innerHTML = '<div style="padding:2rem">Failed to load content.</div>'; });
-    } else {
-      ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+      return <p className="mb-3 leading-relaxed">{text}</p>;
     }
 
     function getLang(){
@@ -317,6 +157,8 @@ if (!acceptedForGate && !isLandingPage && !isRulesPage) {
       const v=q.get('lang');
       return (v==='en'?'en':'he');
     }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
   </script>
 
   <link rel="icon" href="/brand-logo-v42.png" />
