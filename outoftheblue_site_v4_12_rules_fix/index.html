@@ -236,7 +236,8 @@
       .replace(/https?:\/\/[^\s)\]]+/i,'')
       .replace(/[()]/g,'')
       .trim() || 'Open';
-    return <p className="mb-3 leading-relaxed"><a href={url} target="_blank" rel="noopener">{label}</a></p>;
+    return <p className="mb-3 leading-relaxed"><a className="useful-link" href={url} target="_blank" rel="noopener">{label}</a></p>;
+
   }
 
   return <p className="mb-3 leading-relaxed">{text}</p>;
