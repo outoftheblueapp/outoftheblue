@@ -208,6 +208,8 @@
     function extractUrl(s){
       const m = s.match(/https?:\/\/[^\s)\]]+/i);
       return m ? m[0].replace(/[),.]+$/,'') : null;
+    }
+    
   function renderUsefulLine(line){
   const text = (line || '').trim();
   const url = extractUrl(text);
