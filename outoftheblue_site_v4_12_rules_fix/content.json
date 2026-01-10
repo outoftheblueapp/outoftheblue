@@ -75,8 +75,8 @@
         "content": [
           "טיולים מומלצים בגליל המערבי https://www.tiuli.com/tracks?dests=7",
           "מה עושים בנהריה? https://www.nahariya.muni.il/318/",
-          "מרפאות ובתי מרחקת https://www.nahariya.muni.il/%D7%9C%D7%95%D7%97-%D7%AA%D7%95%D7%A8%D7%A0%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%AA%D7%99-%D7%9E%D7%A8%D7%A7%D7%97%D7%AA/",
-          "מסעדות מומלצות:",
+          "מרפאות ובתי מרקחת https://nahariya.muni.il/%D7%9C%D7%95%D7%97-%D7%AA%D7%95%D7%A8%D7%A0%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%AA%D7%99-%D7%9E%D7%A8%D7%A7%D7%97%D7%AA/",
+          "מסעדות מומלצות\u00A0:",
           "נהריה - דיינר אלכסנדר https://alexanderd.co.il/",
           "נהריה – מסעדה יוונית יאמאס https://tabitisrael.co.il/site/meze",
           "נהריה – מסעדה לבנונית ארזים https://www.ozrothagalil.org.il/poi/%D7%9E%D7%A1%D7%A2%D7%93%D7%AA-%D7%90%D7%A8%D7%96%D7%99%D7%9D-%D7%A0%D7%94%D7%A8%D7%99%D7%94/",
@@ -163,14 +163,14 @@
         "content": [
           "Recommended nature attractions in the Western Galilee https://www.tiuli.com/tracks?dests=7",
           "Things to see and do in Nahariya https://www.nahariya.muni.il/318/",
-          "Clinics and pharmacies https://www.nahariya.muni.il/%D7%9C%D7%95%D7%97-%D7%AA%D7%95%D7%A8%D7%A0%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%AA%D7%99-%D7%9E%D7%A8%D7%A7%D7%97%D7%AA/",
-          "Recommended dining:",
+          "Clinics and pharmacies https://nahariya.muni.il/%D7%9C%D7%95%D7%97-%D7%AA%D7%95%D7%A8%D7%A0%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%AA%D7%99-%D7%9E%D7%A8%D7%A7%D7%97%D7%AA/",
+          "Recommended dining\u00A0:",
           "Nahariya – Alexander diner https://alexanderd.co.il/",
           "Nahariya – Greek restaurant Yamas https://tabitisrael.co.il/site/meze",
           "Nahariya – Lebanese restaurant Arazim https://www.ozrothagalil.org.il/poi/%D7%9E%D7%A1%D7%A2%D7%93%D7%AA-%D7%90%D7%A8%D7%96%D7%99%D7%9D-%D7%A0%D7%94%D7%A8%D7%99%D7%94/",
-          "Kabri – Adelina Restaurant https://adelina.org.il/",
-          "Lochamey Hagetaot – Mercato restaurant https://tabitisrael.co.il/site/mercato",
-          "Kfar Yasif – Naseeb fish and seafood https://www.naseeb-rest.com/"
+          "Kabri – Adelina restaurant https://adelina.org.il/",
+          "Lochamay Hagetaot – Mercato restaurant https://tabitisrael.co.il/site/mercato",
+          "Kfar Yasif – Nasib fish and seafood https://www.naseeb-rest.com/"
         ]
       }
     }
