@@ -185,103 +185,120 @@
     }
 
     // Ask page (kept in code; now styled in menu)
-    function AskPage({lang}){
-      const [data,setData]=React.useState(null);
-      const [q,setQ]=React.useState('');
-      const [hits,setHits]=React.useState([]);
-      React.useEffect(()=>{ fetch('/content.json').then(r=>r.json()).then(setData); },[]);
-      const dir = lang==='he'?'rtl':'ltr';
-
-      const onAsk=(e)=>{
-        e.preventDefault();
-        if(!data) return;
-        const L = data[lang]||data.he;
-        const texts=[];
-        const pushAll = (arr, tag)=> (arr||[]).forEach(t=>texts.push({t, tag}));
-        pushAll(L.sections.rules?.content,'rules');
-        pushAll(L.sections.info?.content,'info');
-        pushAll(L.sections.useful?.content,'useful');
-        pushAll(L.sections.arrival?.suite313,'arrival-313');
-        pushAll(L.sections.arrival?.suite413,'arrival-413');
-        pushAll(L.sections.appliances?.suite313,'appliances-313');
-        pushAll(L.sections.appliances?.suite413,'appliances-413');
-
-        const qn = q.trim().toLowerCase();
-        const scored = texts.map(o=>{
-          const t=o.t.toLowerCase();
-          let score=0;
-          qn.split(/\s+/).forEach(w=>{ if(w && t.includes(w)) score+=1; });
-          return {...o, score};
-        }).filter(o=>o.score>0).sort((a,b)=>b.score-a.score).slice(0,12);
-        setHits(scored);
-      };
-
-      return <div dir={dir} className="mx-auto max-w-3xl px-5 py-10">
-        <BackToMenu lang={lang}/>
-        <h1 className="text-3xl font-semibold mb-4">{lang==='he'?'שאלו אותי כל דבר':'Ask me anything'}</h1>
-
-        <p className="opacity-80 mb-4 leading-relaxed">
-          {lang==='he'
-            ? 'היי, אני Blue 👋 כתבו שאלה ואנסה למצוא את המידע הרלוונטי מתוך המדריך.'
-            : 'Hi, I’m Blue 👋 Type a question and I’ll try to find the relevant info in the guide.'}
-        </p>
-
-        <form onSubmit={onAsk} className="flex gap-2 mb-4">
-          <input className="flex-1 border rounded-xl px-3 py-2" placeholder={lang==='he'?'כתבו שאלה...':'Type a question...'} value={q} onChange={e=>setQ(e.target.value)} />
-          <button className="btn" type="submit">{lang==='he'?'שאל/י':'Ask'}</button>
-        </form>
-
-        <div>
-          {hits.length===0
-            ? <p className="opacity-70">{lang==='he'?'התוצאות יוצגו כאן.':'Results will appear here.'}</p>
-            : <div className="space-y-2">
-                {hits.map((h,i)=>(
-                  <div key={i} className="card">
-                    {h.t}
-                    <div className="text-xs opacity-60 mt-1">{h.tag}</div>
-                  </div>
-                ))}
-              </div>
-          }
-        </div>
-      </div>;
+function AskPage({lang}){
+  const [data,setData]=React.useState(null);
+  const [q,setQ]=React.useState('');
+  const [messages, setMessages] = React.useState([
+    {
+      role: "assistant",
+      text: lang==='he'
+        ? "היי, אני Blue 👋 שאל/י אותי כל דבר על הסוויטה, הבניין והאזור. אני עונה רק על סמך המידע שמופיע במדריך."
+        : "Hi, I’m Blue 👋 Ask me anything about the suite, the building, and the area. I answer only based on the information in the guide."
     }
+  ]);
+  const [busy, setBusy] = React.useState(false);
 
-    // Info/Useful helpers
-    function renderInfoLine(line){
-      const idx = line.indexOf(':');
-      if(idx>0){
-        const a = line.slice(0, idx).trim();
-        const b = line.slice(idx+1).trim();
-        return <p className="mb-3 leading-relaxed"><strong>{a}:</strong> {b}</p>;
-      }
-      return <p className="mb-3 leading-relaxed">{line}</p>;
+  React.useEffect(()=>{
+    fetch('/content.json').then(r=>r.json()).then(setData);
+  },[]);
+
+  const dir = lang==='he'?'rtl':'ltr';
+  const suite = (new URLSearchParams(location.search).get('suite') || '').trim(); // optional ?suite=313
+
+  async function onAsk(e){
+    e.preventDefault();
+    const question = q.trim();
+    if(!question || busy) return;
+
+    setQ('');
+    setMessages(prev => [...prev, { role: "user", text: question }]);
+    setBusy(true);
+
+    try{
+      const res = await fetch("/.netlify/functions/concierge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          lang,
+          suite: suite || null,
+          content: data // pass guide JSON so server answers only from it
+        })
+      });
+
+      let json = null;
+      try { json = await res.json(); } catch(e) {}
+
+      const answer = (json && json.answer) ? String(json.answer).trim() : "";
+
+      const fallback = (lang==='he')
+        ? "אין לי תשובה במדריך כרגע. אם תרצה/י, אפשר לפנות למארחים."
+        : "I don’t have that in the guide right now. If you’d like, you can contact the hosts.";
+
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        text: answer || fallback
+      }]);
+    } catch(err){
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        text: lang==='he'
+          ? "מצטער/ת — הייתה שגיאה. נסו שוב."
+          : "Sorry — something went wrong. Please try again."
+      }]);
+    } finally {
+      setBusy(false);
     }
+  }
 
-    function extractUrl(s){
-      const m = s.match(/https?:\/\/[^\s)\]]+/i);
-      return m ? m[0].replace(/[),.]+$/,'') : null;
-    }
+  return (
+    <div dir={dir} className="mx-auto max-w-3xl px-5 py-10">
+      <BackToMenu lang={lang}/>
+      <h1 className="text-3xl font-semibold mb-4">{lang==='he'?'שאלו אותי כל דבר':'Ask me anything'}</h1>
 
-    function renderUsefulLine(line){
-      const text = (line || '').trim();
-      const url = extractUrl(text);
+      <div className="space-y-3 mb-5">
+        {messages.map((m, idx) => (
+          <div key={idx} className={"flex " + (m.role==="user" ? "justify-end" : "justify-start")}>
+            <div className={
+              (m.role==="user"
+                ? "max-w-[85%] rounded-2xl px-4 py-3 bg-[var(--sea)] text-white shadow"
+                : "max-w-[85%] rounded-2xl px-4 py-3 bg-white border shadow-sm")
+            }>
+              <div className="whitespace-pre-wrap leading-relaxed">{m.text}</div>
+            </div>
+          </div>
+        ))}
+        {busy && (
+          <div className="flex justify-start">
+            <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-white border shadow-sm opacity-70">
+              {lang==='he' ? "Blue חושב/ת…" : "Blue is thinking…"}
+            </div>
+          </div>
+        )}
+      </div>
 
-      // Header: no URL and ends with colon
-      if (!url && text.endsWith(':')) {
-        return <p className="mb-3 leading-relaxed"><strong>{text}</strong></p>;
-      }
+      <form onSubmit={onAsk} className="flex gap-2">
+        <input
+          className="flex-1 border rounded-xl px-3 py-2"
+          placeholder={lang==='he'?'כתבו שאלה...':'Type a question...'}
+          value={q}
+          onChange={e=>setQ(e.target.value)}
+          disabled={busy || !data}
+        />
+        <button className="btn" type="submit" disabled={busy || !q.trim() || !data}>
+          {lang==='he'?'שלח/י':'Send'}
+        </button>
+      </form>
 
-      if (url) {
-        const label = text
-          .replace(/https?:\/\/[^\s)\]]+/i,'')
-          .replace(/[()]/g,'')
-          .trim() || 'Open';
-        return <p className="mb-3 leading-relaxed"><a className="useful-link" href={url} target="_blank" rel="noopener">{label}</a></p>;
-      }
+      <p className="text-xs opacity-60 mt-3">
+        {lang==='he'
+          ? "Blue עונה רק על סמך המידע שבמדריך. אם משהו לא מופיע שם — הוא יגיד שאין מידע ולא ינחש."
+          : "Blue answers only from the guide. If something isn’t in it, Blue will say so rather than guessing."}
+      </p>
+    </div>
+  );
+}
 
-      return <p className="mb-3 leading-relaxed">{text}</p>;
-    }
 
     // Rules page content component
     function RulesContent({sec, lang}){
