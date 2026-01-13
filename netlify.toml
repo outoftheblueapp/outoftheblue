@@ -4,6 +4,7 @@ from = "/content.json"
 to = "/outoftheblue_site_v4_12_rules_fix/content.json"
 status = 200
 force = true
+conditions = { Path = "/content.json" }
 
 [[redirects]]
 from = "/brand-logo-v42.png"
