@@ -3,12 +3,12 @@
     "welcomeTitle": "ברוכים הבאים",
     "welcomeIntro": "ברוכים הבאים ל־Out of the Blue ! אנחנו שמחים שבחרתם להתארח אצלנו. הממשק הזה הוא הקונסיארג' האישי שלכם והוא ינגיש לכם את כל המידע שאתם צריכים כדי להבטיח שהות רגועה ונעימה.",
     "menu": [
+      { "key": "ask", "label": "שאלו אותי כל דבר" },
       { "key": "rules", "label": "חוקי הבית" },
       { "key": "arrival", "label": "הוראות הגעה וכניסה" },
       { "key": "info", "label": "מידע חשוב" },
-      { "key": "appliances", "label": "הוראות שימוש במכשירים" },
-      { "key": "useful", "label": "מידע שימושי" },
-      { "key": "ask", "label": "שאלו אותי כל דבר" }
+      { "key": "appliances", "label": "הוראות שימוש במכשירים", "enabled": false },
+      { "key": "useful", "label": "מידע שימושי" }
     ],
     "sections": {
       "rules": {
@@ -87,16 +87,17 @@
       }
     }
   },
+
   "en": {
     "welcomeTitle": "Welcome",
     "welcomeIntro": "Welcome to Out of the Blue! We are delighted you chose to be our guests. Consider this interface your private concierge. Here you’ll find all of the information you need in order to guarantee a calm and relaxing stay.",
     "menu": [
+      { "key": "ask", "label": "Ask me anything" },
       { "key": "rules", "label": "House rules" },
       { "key": "arrival", "label": "Arrival essentials" },
       { "key": "info", "label": "Important information" },
-      { "key": "appliances", "label": "Appliance instructions" },
-      { "key": "useful", "label": "Useful information" },
-      { "key": "ask", "label": "Ask me anything" }
+      { "key": "appliances", "label": "Appliance instructions", "enabled": false },
+      { "key": "useful", "label": "Useful information" }
     ],
     "sections": {
       "rules": {
@@ -167,7 +168,7 @@
           "Recommended dining:",
           "Nahariya – Alexander diner https://alexanderd.co.il/",
           "Nahariya – Greek restaurant Yamas https://tabitisrael.co.il/site/meze",
-          "Nahariya – Lebanese restaurant Arazim https://www.ozrothagalil.org.il/poi/%D7%9E%D7%A1%D7%A2%D7%93%D7%AA-%D7%90%D7%A8%D7%96%D7%99%D7%9D-%D7%A0%D7%94%D7%A8%D7%99%D7%94/",
+          "Nahariya – Lebanese restaurant Arazim https://www.ozrothagalil.org.il/poi/%D7%9E%D7%A1%D7%A2%D7%93%D7%AA-%D7%A2%D7%A8%D7%96%D7%99%D7%9D-%D7%A0%D7%94%D7%A8%D7%99%D7%94/",
           "Kabri – Adelina Restaurant https://adelina.org.il/",
           "Lochamey Hagetaot – Mercato restaurant https://tabitisrael.co.il/site/mercato",
           "Kfar Yasif – Naseeb fish and seafood https://www.naseeb-rest.com/"
