@@ -53,7 +53,7 @@
       const isLanding = isRoot();
 
       React.useEffect(()=>{
-        fetch('/content.json')
+        fetch('/content.json?v=2')
           .then(r=>r.json())
           .then(setData)
           .catch(()=>setData({error:true}));
