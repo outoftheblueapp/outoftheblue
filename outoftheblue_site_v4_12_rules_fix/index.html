@@ -25,13 +25,14 @@
     .useful-link {
       color: var(--deep);
       text-decoration: none;
-      border-bottom: 1px solid rgba(15,23,42,0.25);
-      cursor: pointer;
+      border-bottom: 1.5px solid var(--sea-600);
+      font-weight: 500;
+      transition: color 0.2s, border-color 0.2s;
     }
 
     .useful-link:hover {
       color: var(--sea-600);
-      border-bottom-color: var(--sea-600);
+      border-bottom-color: var(--sea);
     }
   </style>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -54,8 +55,26 @@
 
     function renderUsefulLine(p) {
       if (typeof p === 'string') {
-        return <p className="mb-3 leading-relaxed">{p}</p>;
+        const httpIndex = p.indexOf('http');
+        
+        if (httpIndex !== -1) {
+          let textPart = p.slice(0, httpIndex).trim();
+          textPart = textPart.replace(/[\s:\-,]+$/, ''); 
+          const urlPart = p.slice(httpIndex).trim();
+          const displayText = textPart || urlPart;
+          
+          return (
+            <p className="mb-3 leading-relaxed">
+              <a href={urlPart} target="_blank" rel="noopener noreferrer" className="useful-link">
+                {displayText}
+              </a>
+            </p>
+          );
+        }
+        
+        return <p className="mb-2 mt-6 font-semibold text-lg text-[var(--sea-600)]">{p}</p>;
       }
+      
       if (p && p.text && p.url) {
         return (
           <p className="mb-3 leading-relaxed">
