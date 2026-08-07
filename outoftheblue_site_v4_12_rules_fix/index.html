@@ -48,6 +48,26 @@
     const getAccepted = () => { try { return localStorage.getItem(rulesKey) === 'yes'; } catch(e){ return false; } };
     const setAccepted = (v) => { try { localStorage.setItem(rulesKey, v ? 'yes' : 'no'); } catch(e){} };
 
+    function renderInfoLine(p) {
+      return <p className="mb-3 leading-relaxed">{p}</p>;
+    }
+
+    function renderUsefulLine(p) {
+      if (typeof p === 'string') {
+        return <p className="mb-3 leading-relaxed">{p}</p>;
+      }
+      if (p && p.text && p.url) {
+        return (
+          <p className="mb-3 leading-relaxed">
+            <a href={p.url} target="_blank" rel="noopener noreferrer" className="useful-link">
+              {p.text}
+            </a>
+          </p>
+        );
+      }
+      return null;
+    }
+
     function App(){
       const [lang] = React.useState(getLang());
       const [data, setData] = React.useState(null);
@@ -112,7 +132,6 @@
     }
 
     function Welcome({ L, lang }){
-      // Safety: if not accepted, redirect to rules first
       React.useEffect(()=>{
         if (localStorage.getItem('oob_rules_accepted') !== 'yes') {
           location.href = '/section/rules?lang=' + lang;
@@ -120,8 +139,6 @@
       }, [lang]);
 
       const to = (key) => key==='ask' ? '/ask?lang='+lang : '/section/'+key+'?lang='+lang;
-
-      // Nothing hidden at the moment (you can re-add keys later if needed)
       const hiddenKeys = new Set([]);
 
       const menuItems = (L.menu || [])
@@ -185,7 +202,6 @@
       return <a className="btn inline-block my-2" href={'/welcome?lang='+lang}>{lang==='he'?'חזרה לתפריט':'Back to main menu'}</a>;
     }
 
-    // Ask page — chat UI + AI via Netlify function
     function AskPage({ lang }) {
       const [data, setData] = React.useState(null);
       const [messages, setMessages] = React.useState(() => ([
@@ -352,7 +368,6 @@
       );
     }
 
-    // Rules page content component
     function RulesContent({sec, lang}){
       const [checked,setChecked] = React.useState(false);
       return <div>
@@ -367,10 +382,7 @@
       </div>;
     }
 
-    // Router
     const path = location.pathname;
-
-    // Global gate: require accepting house rules before accessing anything (except landing + rules page)
     const langForGate = getLang();
     const acceptedForGate = (localStorage.getItem('oob_rules_accepted') === 'yes');
     const isRulesPage = path === '/section/rules' || path.startsWith('/section/rules/');
