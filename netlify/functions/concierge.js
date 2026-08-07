@@ -4,7 +4,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { lang, question, content } = JSON.parse(event.body || '{}');
+    const { lang, question, history = [], content } = JSON.parse(event.body || '{}');
 
     if (!question) {
       return {
@@ -27,24 +27,39 @@ exports.handler = async (event) => {
     const systemInstruction = `
 You are Blue, a warm, helpful, and natural digital AI concierge for the "Out of the Blue" vacation suite in Nahariya, Israel.
 
-PERSONALITY & TONE:
-- Be friendly, hospitable, and conversational like a real local host.
-- Do NOT use rigid, robotic refusal scripts. Keep interactions flowing naturally.
+CONVERSATION & MEMORY RULES:
+1. CONVERSATION CONTEXT:
+   - Always track the ongoing conversation context. When a guest asks follow-up questions like "How do I get there?", "Is it open?", or "What about a supermarket?", reply specifically about the venue or topic discussed in the immediate prior messages.
 
-RULES FOR SOURCES:
-1. SUITE & PROPERTY QUESTIONS (Check-in, checkout, parking, Wi-Fi, pool, house rules, amenities):
-   - Rely primary on the PROPERTY GUIDE CONTEXT.
-   - If a guest asks something specific about the suite that isn't in the guide, answer warmly and suggest checking with the host directly.
+2. SPECIFIC EXTERNAL PLACES & LOCAL VENUES:
+   - When a guest asks about a specific real-world venue, business, attraction, or supermarket (e.g., Feisal / שוק פייסל, Big Regba, specific local restaurants, etc.):
+     a) Answer accurately using your general local knowledge about THAT specific venue.
+     b) NEVER substitute or force a property guide alternative (e.g., Hof HaDekel) unless the guest explicitly asks for "the closest alternative" or "something nearby in the guide."
+     c) NEVER output directions to the suite itself when asked how to get to an external business or landmark.
 
-2. LOCAL AREA, RECOMMENDATIONS & GENERAL KNOWLEDGE (Restaurants, beaches, weather, history, transportation, live recommendations):
-   - Act as an expert local guide. Answer freely using your knowledge base and general web-based information.
+3. PROPERTY GUIDE CONTEXT:
+   - Use the PROPERTY GUIDE CONTEXT primarily for property-specific rules, check-in, checkout, Wi-Fi, pool access, and suite amenities.
 
-3. LANGUAGE:
+4. LANGUAGE & TONE:
+   - Respond warmly and conversationally like a local host.
    - Always reply in the user's primary language (${lang === 'he' ? 'Hebrew' : 'English'}).
 
 PROPERTY GUIDE CONTEXT:
 ${guideContext}
 `;
+
+    // Map conversation history into OpenAI message format
+    const formattedHistory = history.map((msg) => ({
+      role: msg.sender === 'user' || msg.role === 'user' ? 'user' : 'assistant',
+      content: msg.text || msg.content || ''
+    }));
+
+    // Combine system prompt, history, and new user question
+    const messages = [
+      { role: 'system', content: systemInstruction },
+      ...formattedHistory,
+      { role: 'user', content: question }
+    ];
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -54,11 +69,8 @@ ${guideContext}
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: systemInstruction },
-          { role: 'user', content: question }
-        ],
-        temperature: 0.7
+        messages: messages,
+        temperature: 0.5
       })
     });
 
