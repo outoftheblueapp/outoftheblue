@@ -54,7 +54,7 @@
       const isLanding = isRoot();
 
       React.useEffect(()=>{
-        fetch('/content.json?v=2')
+        fetch('/content.json?v=' + Date.now())
           .then(r=>r.json())
           .then(setData)
           .catch(()=>setData({error:true}));
@@ -185,177 +185,172 @@
       return <a className="btn inline-block my-2" href={'/welcome?lang='+lang}>{lang==='he'?'חזרה לתפריט':'Back to main menu'}</a>;
     }
 
-    // Ask page (kept in code; now styled in menu)
-// Ask page — chat UI + AI via Netlify function
-function AskPage({ lang }) {
-  const [data, setData] = React.useState(null);
-  const [messages, setMessages] = React.useState(() => ([
-    {
-      role: 'assistant',
-      content:
-        lang === 'he'
-          ? "היי, אני בלו 👋 שאלו אותי כל דבר על הסוויטה, הבניין והאזור. אני עונה רק לפי המידע במדריך."
-          : "Hi, I’m Blue 👋 Ask me anything about the suite, the building, and the area. I answer only based on the information in the guide."
-    }
-  ]));
-  const [input, setInput] = React.useState('');
-  const [sending, setSending] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const bottomRef = React.useRef(null);
+    // Ask page — chat UI + AI via Netlify function
+    function AskPage({ lang }) {
+      const [data, setData] = React.useState(null);
+      const [messages, setMessages] = React.useState(() => ([
+        {
+          role: 'assistant',
+          content:
+            lang === 'he'
+              ? "היי, אני בלו 👋 שאלו אותי כל דבר על הסוויטה, הבניין והאזור. אני עונה רק לפי המידע במדריך."
+              : "Hi, I’m Blue 👋 Ask me anything about the suite, the building, and the area. I answer only based on the information in the guide."
+        }
+      ]));
+      const [input, setInput] = React.useState('');
+      const [sending, setSending] = React.useState(false);
+      const [error, setError] = React.useState('');
+      const bottomRef = React.useRef(null);
 
-  const dir = lang === 'he' ? 'rtl' : 'ltr';
+      const dir = lang === 'he' ? 'rtl' : 'ltr';
 
-  React.useEffect(() => {
-    fetch('/content.json')
-      .then(r => r.json())
-      .then(setData)
-      .catch(() => setData({ error: true }));
-  }, []);
+      React.useEffect(() => {
+        fetch('/content.json?v=' + Date.now())
+          .then(r => r.json())
+          .then(setData)
+          .catch(() => setData({ error: true }));
+      }, []);
 
-  React.useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, sending]);
+      React.useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, [messages, sending]);
 
-  const buildGuideText = (L) => {
-    const lines = [];
-    const addSection = (title, arr) => {
-      if (!arr || !arr.length) return;
-      lines.push(`\n## ${title}`);
-      arr.forEach(x => lines.push(`- ${x}`));
-    };
+      const buildGuideText = (L) => {
+        const lines = [];
+        const addSection = (title, arr) => {
+          if (!arr || !arr.length) return;
+          lines.push(`\n## ${title}`);
+          arr.forEach(x => lines.push(`- ${x}`));
+        };
 
-    addSection(lang === 'he' ? 'חוקי הבית' : 'House rules', L.sections?.rules?.content);
-    addSection(lang === 'he' ? 'מידע חשוב' : 'Important information', L.sections?.info?.content);
-    addSection(lang === 'he' ? 'מידע שימושי' : 'Useful information', L.sections?.useful?.content);
+        addSection(lang === 'he' ? 'חוקי הבית' : 'House rules', L.sections?.rules?.content);
+        addSection(lang === 'he' ? 'מידע חשוב' : 'Important information', L.sections?.info?.content);
+        addSection(lang === 'he' ? 'מידע שימושי' : 'Useful information', L.sections?.useful?.content);
 
-    const a313 = L.sections?.arrival?.suite313 || [];
-    const a413 = L.sections?.arrival?.suite413 || [];
-    if (a313.length) addSection(lang === 'he' ? 'הוראות הגעה · סוויטה 313' : 'Arrival · Suite 313', a313);
-    if (a413.length) addSection(lang === 'he' ? 'הוראות הגעה · סוויטה 413' : 'Arrival · Suite 413', a413);
+        const a313 = L.sections?.arrival?.suite313 || [];
+        const a413 = L.sections?.arrival?.suite413 || [];
+        if (a313.length) addSection(lang === 'he' ? 'הוראות הגעה · סוויטה 313' : 'Arrival · Suite 313', a313);
+        if (a413.length) addSection(lang === 'he' ? 'הוראות הגעה · סוויטה 413' : 'Arrival · Suite 413', a413);
 
-    // appliances excluded for now (per your request)
-    return lines.join('\n');
-  };
+        return lines.join('\n');
+      };
 
-  const send = async (e) => {
-    e.preventDefault();
-    setError('');
+      const send = async (e) => {
+        e.preventDefault();
+        setError('');
 
-    const q = (input || '').trim();
-    if (!q || sending) return;
+        const q = (input || '').trim();
+        if (!q || sending) return;
 
-    // show user message immediately
-    setMessages(prev => [...prev, { role: 'user', content: q }]);
-    setInput('');
-    setSending(true);
+        setMessages(prev => [...prev, { role: 'user', content: q }]);
+        setInput('');
+        setSending(true);
 
-    try {
-      if (!data || data.error) throw new Error('Content not loaded');
-      const L = data[lang] || data.he;
-      const guide = buildGuideText(L);
+        try {
+          if (!data || data.error) throw new Error('Content not loaded');
+          const L = data[lang] || data.he;
+          const guide = buildGuideText(L);
 
-      const res = await fetch('/.netlify/functions/concierge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lang,
-          question: q,
-        suite: null,
-  content: data
-        })
-      });
+          const res = await fetch('/.netlify/functions/concierge', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              lang,
+              question: q,
+              suite: null,
+              content: data
+            })
+          });
 
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(json?.error || `Request failed (${res.status})`);
-      }
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            throw new Error(json?.error || `Request failed (${res.status})`);
+          }
 
-      const answer = (json?.answer || '').trim();
-      const finalAnswer =
-        answer ||
-        (lang === 'he'
-          ? "אני לא מוצא/ת תשובה במדריך כרגע. אם תרצו, אפשר ליצור קשר עם המארחים."
-          : "I don’t have that in the guide right now. If you’d like, you can contact the hosts.");
+          const answer = (json?.answer || '').trim();
+          const finalAnswer =
+            answer ||
+            (lang === 'he'
+              ? "אני לא מוצא/ת תשובה במדריך כרגע. אם תרצו, אפשר ליצור קשר עם המארחים."
+              : "I don’t have that in the guide right now. If you’d like, you can contact the hosts.");
 
-      setMessages(prev => [...prev, { role: 'assistant', content: finalAnswer }]);
-    } catch (err) {
-      console.error(err);
-      setError(lang === 'he'
-        ? "משהו השתבש. נסו שוב בעוד רגע."
-        : "Something went wrong. Please try again in a moment.");
+          setMessages(prev => [...prev, { role: 'assistant', content: finalAnswer }]);
+        } catch (err) {
+          console.error(err);
+          setError(lang === 'he'
+            ? "משהו השתבש. נסו שוב בעוד רגע."
+            : "Something went wrong. Please try again in a moment.");
 
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: lang === 'he'
-          ? "אני לא מצליח/ה לענות כרגע. אם תרצו, אפשר ליצור קשר עם המארחים."
-          : "I can’t answer right now. If you’d like, you can contact the hosts."
-      }]);
-    } finally {
-      setSending(false);
-    }
-  };
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: lang === 'he'
+              ? "אני לא מצליח/ה לענות כרגע. אם תרצו, אפשר ליצור קשר עם המארחים."
+              : "I can’t answer right now. If you’d like, you can contact the hosts."
+          }]);
+        } finally {
+          setSending(false);
+        }
+      };
 
-  const Bubble = ({ role, children }) => {
-    const isUser = role === 'user';
-    return (
-      <div className={"w-full flex " + (isUser ? "justify-end" : "justify-start")}>
-        <div className={
-          (isUser
-            ? "max-w-[85%] rounded-2xl bg-[var(--sea)] text-white px-4 py-3 shadow"
-            : "max-w-[85%] rounded-2xl bg-white border border-slate-200 px-4 py-3 shadow-sm")
-        }>
-          <div className="whitespace-pre-wrap leading-relaxed">{children}</div>
+      const Bubble = ({ role, children }) => {
+        const isUser = role === 'user';
+        return (
+          <div className={"w-full flex " + (isUser ? "justify-end" : "justify-start")}>
+            <div className={
+              (isUser
+                ? "max-w-[85%] rounded-2xl bg-[var(--sea)] text-white px-4 py-3 shadow"
+                : "max-w-[85%] rounded-2xl bg-white border border-slate-200 px-4 py-3 shadow-sm")
+            }>
+              <div className="whitespace-pre-wrap leading-relaxed">{children}</div>
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <div dir={dir} className="mx-auto max-w-4xl px-5 py-10">
+          <BackToMenu lang={lang} />
+
+          <h1 className="text-3xl font-semibold mb-6">
+            {lang === 'he' ? 'שאלו אותי כל דבר' : 'Ask me anything'}
+          </h1>
+
+          <div className="space-y-4 mb-6">
+            {messages.map((m, i) => (
+              <Bubble key={i} role={m.role}>{m.content}</Bubble>
+            ))}
+
+            {sending && (
+              <Bubble role="assistant">
+                {lang === 'he' ? 'חושב/ת…' : 'Thinking…'}
+              </Bubble>
+            )}
+
+            <div ref={bottomRef} />
+          </div>
+
+          <form onSubmit={send} className="flex gap-3 items-center">
+            <input
+              className="flex-1 border rounded-2xl px-4 py-3 bg-white"
+              placeholder={lang === 'he' ? 'כתבו שאלה…' : 'Type a question…'}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <button className="btn px-5" type="submit" disabled={sending}>
+              {lang === 'he' ? 'שלח' : 'Send'}
+            </button>
+          </form>
+
+          {error && <p className="text-sm mt-3 opacity-70">{error}</p>}
+
+          <p className="text-xs mt-4 opacity-60">
+            {lang === 'he'
+              ? 'בלו עונה רק לפי המידע במדריך. אם משהו לא מופיע בו, בלו יעדיף להגיד שלא יודע/ת מאשר לנחש.'
+              : 'Blue answers only from the guide. If something isn’t in it, Blue will say so rather than guessing.'}
+          </p>
         </div>
-      </div>
-    );
-  };
-
-  return (
-    <div dir={dir} className="mx-auto max-w-4xl px-5 py-10">
-      <BackToMenu lang={lang} />
-
-      <h1 className="text-3xl font-semibold mb-6">
-        {lang === 'he' ? 'שאלו אותי כל דבר' : 'Ask me anything'}
-      </h1>
-
-      <div className="space-y-4 mb-6">
-        {messages.map((m, i) => (
-          <Bubble key={i} role={m.role}>{m.content}</Bubble>
-        ))}
-
-        {sending && (
-          <Bubble role="assistant">
-            {lang === 'he' ? 'חושב/ת…' : 'Thinking…'}
-          </Bubble>
-        )}
-
-        <div ref={bottomRef} />
-      </div>
-
-      <form onSubmit={send} className="flex gap-3 items-center">
-        <input
-          className="flex-1 border rounded-2xl px-4 py-3 bg-white"
-          placeholder={lang === 'he' ? 'כתבו שאלה…' : 'Type a question…'}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button className="btn px-5" type="submit" disabled={sending}>
-          {lang === 'he' ? 'שלח' : 'Send'}
-        </button>
-      </form>
-
-      {error && <p className="text-sm mt-3 opacity-70">{error}</p>}
-
-      <p className="text-xs mt-4 opacity-60">
-        {lang === 'he'
-          ? 'בלו עונה רק לפי המידע במדריך. אם משהו לא מופיע בו, בלו יעדיף להגיד שלא יודע/ת מאשר לנחש.'
-          : 'Blue answers only from the guide. If something isn’t in it, Blue will say so rather than guessing.'}
-      </p>
-    </div>
-  );
-}
-
-
+      );
+    }
 
     // Rules page content component
     function RulesContent({sec, lang}){
@@ -394,7 +389,7 @@ function AskPage({ lang }) {
       const suite = parts[2];
       const lang = getLang();
 
-      fetch('/content.json').then(r=>r.json()).then(data=>{
+      fetch('/content.json?v=' + Date.now()).then(r=>r.json()).then(data=>{
         const L = data[lang] || data.he;
         const dir = lang==='he' ? 'rtl' : 'ltr';
         const root = document.getElementById('root');
