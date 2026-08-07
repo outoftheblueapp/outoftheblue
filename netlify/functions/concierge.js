@@ -13,11 +13,11 @@ exports.handler = async (event) => {
       };
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'GEMINI_API_KEY is not configured.' })
+        body: JSON.stringify({ error: 'OPENAI_API_KEY is not configured.' })
       };
     }
 
@@ -44,32 +44,29 @@ PROPERTY GUIDE CONTEXT:
 ${guideContext}
 `;
 
-    // Updated to standard Gemini API endpoint
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-    const payload = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: `${systemInstruction}\n\nGuest Question: ${question}` }]
-        }
-      ]
-    };
-
-    const response = await fetch(url, {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemInstruction },
+          { role: 'user', content: question }
+        ]
+      })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Gemini API Error:', data);
+      console.error('OpenAI API Error:', data);
       throw new Error(data.error?.message || 'API request failed');
     }
 
-    const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const answer = data.choices?.[0]?.message?.content || '';
 
     return {
       statusCode: 200,
